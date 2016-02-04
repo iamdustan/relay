@@ -35,7 +35,7 @@ let scheduler: ?TaskScheduler;
  * By default, the next task is executed synchronously after the previous one is
  * finished. An injected scheduler using `setImmediate` can alter this behavior.
  */
-var RelayTaskScheduler = {
+const RelayTaskScheduler = {
   /**
    * @internal
    *

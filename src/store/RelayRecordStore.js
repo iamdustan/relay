@@ -144,7 +144,7 @@ class RelayRecordStore {
    * Returns the status of the record stored at `dataID`.
    */
   getRecordState(dataID: DataID): RecordState {
-    var record = this._getRecord(dataID);
+    const record = this._getRecord(dataID);
     if (record === null) {
       return 'NONEXISTENT';
     } else if (record === undefined) {
@@ -159,7 +159,7 @@ class RelayRecordStore {
   getPathToRecord(
     dataID: DataID
   ): ?RelayQueryPath {
-    var path: ?RelayQueryPath = (this._getField(dataID, PATH): any);
+    const path: ?RelayQueryPath = (this._getField(dataID, PATH): any);
     return path;
   }
 
@@ -186,7 +186,7 @@ class RelayRecordStore {
       'RelayRecordStore.getClientMutationIDs(): Optimistic updates require ' +
       'queued records.'
     );
-    var record = this._queuedRecords[dataID];
+    const record = this._queuedRecords[dataID];
     return record ? record.__mutationIDs__ : null;
   }
 
@@ -229,7 +229,7 @@ class RelayRecordStore {
     dataID: DataID,
     storageKey: string
   ): ?DataID {
-    var field = this._getField(dataID, storageKey);
+    const field = this._getField(dataID, storageKey);
     if (field == null) {
       return field;
     }
@@ -253,7 +253,7 @@ class RelayRecordStore {
     dataID: DataID,
     storageKey: string
   ): ?Array<DataID> {
-    var field = this._getField(dataID, storageKey);
+    const field = this._getField(dataID, storageKey);
     if (field == null) {
       return field;
     }
@@ -285,7 +285,7 @@ class RelayRecordStore {
   getConnectionIDsForRecord(
     dataID: DataID
   ): ?Array<DataID> {
-    var connectionIDs = this._nodeConnectionMap[dataID];
+    const connectionIDs = this._nodeConnectionMap[dataID];
     if (connectionIDs) {
       return Object.keys(connectionIDs);
     }
@@ -301,14 +301,14 @@ class RelayRecordStore {
     schemaName: string
   ): ?Array<DataID> {
     // ignore queued records because not all range fields may be present there
-    var record = this._records[dataID];
+    const record = this._records[dataID];
     if (record == null) {
       return record;
     }
-    var connectionIDs;
+    let connectionIDs;
     forEachObject(record, (datum, key) => {
       if (datum && getFieldNameFromKey(key) === schemaName) {
-        var dataID = datum.__dataID__;
+        const dataID = datum.__dataID__;
         if (dataID) {
           connectionIDs = connectionIDs || [];
           connectionIDs.push(dataID);
@@ -324,7 +324,7 @@ class RelayRecordStore {
   getRangeForceIndex(
     connectionID: DataID
   ): number {
-    var forceIndex: ?number = (this._getField(connectionID, FORCE_INDEX): any);
+    const forceIndex: ?number = (this._getField(connectionID, FORCE_INDEX): any);
     if (forceIndex === null) {
       return -1;
     }
@@ -359,7 +359,7 @@ class RelayRecordStore {
     if (connectionID == null) {
       return connectionID;
     }
-    var range: ?GraphQLRange = (this._getField(connectionID, RANGE): any);
+    const range: ?GraphQLRange = (this._getField(connectionID, RANGE): any);
     if (range == null) {
       if (range === null) {
         warning(
@@ -370,7 +370,7 @@ class RelayRecordStore {
       }
       return undefined;
     }
-    var filterCalls = getFilterCalls(calls);
+    const filterCalls = getFilterCalls(calls);
     // Edges can only be fetched if a range call (first/last/find) is given.
     // Otherwise return diffCalls/filterCalls with empty edges.
     if (calls.length === filterCalls.length) {
@@ -382,10 +382,10 @@ class RelayRecordStore {
         filteredEdges: [],
       };
     }
-    var queuedRecord = this._queuedRecords ?
+    const queuedRecord = this._queuedRecords ?
       this._queuedRecords[connectionID] :
       null;
-    var {
+    let {
       diffCalls,
       pageInfo,
       requestedEdgeIDs,
@@ -456,9 +456,9 @@ class RelayRecordStore {
    * `undefined` if the record has not been fetched.
    */
   _getField(dataID: DataID, storageKey: string): ?FieldValue {
-    var storage = this._storage;
-    for (var ii = 0; ii < storage.length; ii++) {
-      var record = storage[ii][dataID];
+    const storage = this._storage;
+    for (let ii = 0; ii < storage.length; ii++) {
+      const record = storage[ii][dataID];
       if (record === null) {
         return null;
       } else if (record && record.hasOwnProperty(storageKey)) {

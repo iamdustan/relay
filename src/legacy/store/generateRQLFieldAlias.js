@@ -17,7 +17,7 @@
 const base62 = require('base62');
 const crc32 = require('crc32');
 
-var PREFIX = '_';
+const PREFIX = '_';
 
 /**
  * Sanitizes a stringified GraphQL field (including any calls and their values)
@@ -36,7 +36,7 @@ var PREFIX = '_';
  */
 function generateRQLFieldAlias(input) {
   // Field names with no calls can be used as aliases without encoding
-  var index = input.indexOf('.');
+  const index = input.indexOf('.');
   if (index === -1) {
     return input;
   }

@@ -9,7 +9,7 @@
 
 'use strict';
 
-var fetchRelayQuery = jest.genMockFromModule('fetchRelayQuery');
+const fetchRelayQuery = jest.genMockFromModule('fetchRelayQuery');
 
 /**
  * Mock object to simulate the behavior of a request. Example usage:

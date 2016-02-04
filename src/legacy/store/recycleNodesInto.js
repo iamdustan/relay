@@ -23,18 +23,18 @@ function recycleNodesInto<T>(prevData: T, nextData: T): T {
       typeof nextData !== 'object' || !nextData) {
     return nextData;
   }
-  var canRecycle = false;
+  let canRecycle = false;
   if (prevData instanceof GraphQLFragmentPointer) {
     canRecycle =
       nextData instanceof GraphQLFragmentPointer &&
       nextData.equals(prevData);
   } else {
-    var isPrevArray = Array.isArray(prevData);
-    var isNextArray = Array.isArray(nextData);
+    const isPrevArray = Array.isArray(prevData);
+    const isNextArray = Array.isArray(nextData);
     if (isPrevArray && isNextArray) {
       // Assign local variables to preserve Flow type refinement.
-      var prevArray = prevData;
-      var nextArray = nextData;
+      const prevArray = prevData;
+      const nextArray = nextData;
       canRecycle =
         nextArray.reduce((wasEqual, nextItem, ii) => {
           nextArray[ii] = recycleNodesInto(prevArray[ii], nextItem);
@@ -43,13 +43,13 @@ function recycleNodesInto<T>(prevData: T, nextData: T): T {
         prevArray.length === nextArray.length;
     } else if (!isPrevArray && !isNextArray) {
       // Assign local variables to preserve Flow type refinement.
-      var prevObject = prevData;
-      var nextObject = nextData;
-      var prevKeys = Object.keys(prevObject);
-      var nextKeys = Object.keys(nextObject);
+      const prevObject = prevData;
+      const nextObject = nextData;
+      const prevKeys = Object.keys(prevObject);
+      const nextKeys = Object.keys(nextObject);
       canRecycle =
         nextKeys.reduce((wasEqual, key) => {
-          var nextValue = nextObject[key];
+          const nextValue = nextObject[key];
           nextObject[key] = recycleNodesInto(prevObject[key], nextValue);
           return wasEqual && nextObject[key] === prevObject[key];
         }, true) &&

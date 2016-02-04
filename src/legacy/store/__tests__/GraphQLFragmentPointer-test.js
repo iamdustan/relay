@@ -21,7 +21,7 @@ const RelayRecordStore = require('RelayRecordStore');
 const RelayTestUtils = require('RelayTestUtils');
 
 describe('GraphQLFragmentPointer', () => {
-  var {getNode, getRefNode} = RelayTestUtils;
+  const {getNode, getRefNode} = RelayTestUtils;
 
   beforeEach(() => {
     jest.resetModuleRegistry();
@@ -41,22 +41,22 @@ describe('GraphQLFragmentPointer', () => {
   });
 
   describe('createForRoot', () => {
-    var recordStore;
+    let recordStore;
 
     beforeEach(() => {
-      var records = {};
+      const records = {};
       recordStore = new RelayRecordStore({records});
     });
 
     it('creates a wrapped fragment pointer', () => {
-      var rootFragment = Relay.QL`fragment on Node{id}`;
-      var root = getNode(Relay.QL`query{node(id:"123"){${rootFragment}}}`);
+      const rootFragment = Relay.QL`fragment on Node{id}`;
+      const root = getNode(Relay.QL`query{node(id:"123"){${rootFragment}}}`);
 
-      var result = GraphQLFragmentPointer.createForRoot(recordStore, root);
-      var resultKeys = Object.keys(result);
+      const result = GraphQLFragmentPointer.createForRoot(recordStore, root);
+      const resultKeys = Object.keys(result);
       expect(resultKeys.length).toBe(1);
 
-      var fragmentPointer = result[resultKeys[0]];
+      const fragmentPointer = result[resultKeys[0]];
       expect(fragmentPointer.getDataID()).toBe('123');
       expect(fragmentPointer.getFragment()).toEqualQueryNode(
         getNode(rootFragment)
@@ -64,9 +64,9 @@ describe('GraphQLFragmentPointer', () => {
     });
 
     it('throws if multiple root fragments are present', () => {
-      var rootFragmentA = Relay.QL`fragment on Node{id}`;
-      var rootFragmentB = Relay.QL`fragment on Node{id}`;
-      var root = getNode(Relay.QL`
+      const rootFragmentA = Relay.QL`fragment on Node{id}`;
+      const rootFragmentB = Relay.QL`fragment on Node{id}`;
+      const root = getNode(Relay.QL`
         query {
           username(name:"foo"){${rootFragmentA},${rootFragmentB}}
         }
@@ -82,7 +82,7 @@ describe('GraphQLFragmentPointer', () => {
     });
 
     it('throws if non-fragments are present', () => {
-      var root = getNode(Relay.QL`query{username(name:"foo"){name}}`);
+      const root = getNode(Relay.QL`query{username(name:"foo"){name}}`);
 
       expect(() => {
         GraphQLFragmentPointer.createForRoot(recordStore, root);
@@ -95,8 +95,8 @@ describe('GraphQLFragmentPointer', () => {
     });
 
     it('throws for unknown ref queries', () => {
-      var rootFragment = Relay.QL`fragment on Node{id}`;
-      var root = getRefNode(
+      const rootFragment = Relay.QL`fragment on Node{id}`;
+      const root = getRefNode(
         Relay.QL`query{nodes(ids:$ref_q0){${rootFragment}}}`,
         {path: '$.*.id'}
       );
@@ -112,8 +112,8 @@ describe('GraphQLFragmentPointer', () => {
     it('returns null when the root call was not fetched', () => {
       // When a root call is not fetched since it only contained empty
       // fragments, we shouldn't throw.
-      var ref = Relay.QL`fragment on Viewer { actor { id } }`;
-      var root = getNode(Relay.QL`query{viewer{${ref}}}`);
+      const ref = Relay.QL`fragment on Viewer { actor { id } }`;
+      const root = getNode(Relay.QL`query{viewer{${ref}}}`);
 
       expect(
         GraphQLFragmentPointer.createForRoot(recordStore, root)
@@ -122,11 +122,11 @@ describe('GraphQLFragmentPointer', () => {
   });
 
   describe('plurality', () => {
-    var variables;
-    var singular;
-    var singularFragment;
-    var plural;
-    var pluralFragment;
+    let variables;
+    let singular;
+    let singularFragment;
+    let plural;
+    let pluralFragment;
 
     beforeEach(() => {
       variables = {a: true, b: 1, c: ''};
@@ -137,7 +137,7 @@ describe('GraphQLFragmentPointer', () => {
     });
 
     it('creates singular pointers', () => {
-      var pointer = new GraphQLFragmentPointer('123', singularFragment);
+      const pointer = new GraphQLFragmentPointer('123', singularFragment);
 
       expect(pointer.getDataID()).toBe('123');
       expect(pointer.getFragment()).toBe(singularFragment);
@@ -148,7 +148,7 @@ describe('GraphQLFragmentPointer', () => {
     });
 
     it('creates plural pointers', () => {
-      var pointer = new GraphQLFragmentPointer(['123'], pluralFragment);
+      const pointer = new GraphQLFragmentPointer(['123'], pluralFragment);
 
       expect(pointer.getDataIDs()).toEqual(['123']);
       expect(pointer.getFragment()).toBe(pluralFragment);
@@ -179,15 +179,15 @@ describe('GraphQLFragmentPointer', () => {
     /* eslint-enable no-new */
 
     it('singular pointers are equals() to matching pointers', () => {
-      var pointer = new GraphQLFragmentPointer('123', singularFragment);
-      var another =
+      const pointer = new GraphQLFragmentPointer('123', singularFragment);
+      const another =
         new GraphQLFragmentPointer('123', getNode(singular, variables));
 
       expect(pointer).toEqualPointer(another);
     });
 
     it('singular pointers are not equals() to different pointers', () => {
-      var pointer = new GraphQLFragmentPointer('123', singularFragment);
+      const pointer = new GraphQLFragmentPointer('123', singularFragment);
       // different id
       expect(pointer).not.toEqualPointer(
         new GraphQLFragmentPointer('456', getNode(singular, variables))
@@ -200,15 +200,15 @@ describe('GraphQLFragmentPointer', () => {
         )
       );
       // different variables
-      var differentVariables = {...variables, d: 'different'};
+      const differentVariables = {...variables, d: 'different'};
       expect(pointer).not.toEqualPointer(
         new GraphQLFragmentPointer('123', getNode(singular, differentVariables))
       );
     });
 
     it('plural pointers are equals() to matching pointers', () => {
-      var pointer = new GraphQLFragmentPointer(['123'], pluralFragment);
-      var another = new GraphQLFragmentPointer(
+      const pointer = new GraphQLFragmentPointer(['123'], pluralFragment);
+      const another = new GraphQLFragmentPointer(
         ['123'],
         getNode(plural, variables)
       );
@@ -217,7 +217,7 @@ describe('GraphQLFragmentPointer', () => {
     });
 
     it('plural pointers are not equals() to different pointers', () => {
-      var pointer = new GraphQLFragmentPointer(['123'], pluralFragment);
+      const pointer = new GraphQLFragmentPointer(['123'], pluralFragment);
       // different id
       expect(pointer).not.toEqualPointer(
         new GraphQLFragmentPointer(['456'], getNode(plural, variables))
@@ -233,7 +233,7 @@ describe('GraphQLFragmentPointer', () => {
         )
       );
       // different variables
-      var differentVariables = {...variables, d: 'different'};
+      const differentVariables = {...variables, d: 'different'};
       expect(pointer).not.toEqualPointer(
         new GraphQLFragmentPointer(['123'], getNode(plural, differentVariables))
       );

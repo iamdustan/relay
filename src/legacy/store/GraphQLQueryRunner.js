@@ -79,11 +79,11 @@ class GraphQLQueryRunner {
     fetchMode?: string
   ): Abortable {
     fetchMode = fetchMode || DliteFetchModeConstants.FETCH_MODE_CLIENT;
-    var profiler = fetchMode === DliteFetchModeConstants.FETCH_MODE_REFETCH ?
+    const profiler = fetchMode === DliteFetchModeConstants.FETCH_MODE_REFETCH ?
       RelayProfiler.profile('GraphQLQueryRunner.forceFetch') :
       RelayProfiler.profile('GraphQLQueryRunner.primeCache');
 
-    var diffQueries = [];
+    const diffQueries = [];
     if (fetchMode === DliteFetchModeConstants.FETCH_MODE_CLIENT) {
       forEachObject(querySet, query => {
         if (query) {
@@ -122,9 +122,9 @@ class GraphQLQueryRunner {
     querySet: RelayQuerySet,
     callback: ReadyStateChangeCallback
   ): Abortable {
-    var fetchMode = DliteFetchModeConstants.FETCH_MODE_REFETCH;
-    var profiler = RelayProfiler.profile('GraphQLQueryRunner.forceFetch');
-    var queries = [];
+    const fetchMode = DliteFetchModeConstants.FETCH_MODE_REFETCH;
+    const profiler = RelayProfiler.profile('GraphQLQueryRunner.forceFetch');
+    const queries = [];
     forEachObject(querySet, query => {
       query && queries.push(query);
     });
@@ -155,7 +155,7 @@ function splitAndFlattenQueries(
     return queries;
   }
 
-  var flattenedQueries = [];
+  const flattenedQueries = [];
   queries.forEach(query => {
     return flattenedQueries.push(
       ...flattenSplitRelayQueries(
@@ -173,14 +173,14 @@ function runQueries(
   fetchMode: string,
   profiler: RelayProfileHandler
 ): Abortable {
-  var readyState = {
+  let readyState = {
     aborted: false,
     done: false,
     error: null,
     ready: false,
     stale: false,
   };
-  var scheduled = false;
+  let scheduled = false;
   function setReadyState(partial: PartialReadyState): void {
     if (readyState.aborted) {
       return;
@@ -209,12 +209,12 @@ function runQueries(
     });
   }
 
-  var remainingFetchMap: {[queryID: string]: PendingFetch} = {};
-  var remainingRequiredFetchMap: {[queryID: string]: PendingFetch} = {};
+  const remainingFetchMap: {[queryID: string]: PendingFetch} = {};
+  const remainingRequiredFetchMap: {[queryID: string]: PendingFetch} = {};
 
   function onResolved(pendingFetch: PendingFetch) {
-    var pendingQuery = pendingFetch.getQuery();
-    var pendingQueryID = pendingQuery.getID();
+    const pendingQuery = pendingFetch.getQuery();
+    const pendingQueryID = pendingQuery.getID();
     delete remainingFetchMap[pendingQueryID];
     if (!pendingQuery.isDeferred()) {
       delete remainingRequiredFetchMap[pendingQueryID];
@@ -240,8 +240,8 @@ function runQueries(
   function onRejected(pendingFetch: PendingFetch, error: Error) {
     setReadyState({error});
 
-    var pendingQuery = pendingFetch.getQuery();
-    var pendingQueryID = pendingQuery.getID();
+    const pendingQuery = pendingFetch.getQuery();
+    const pendingQueryID = pendingQuery.getID();
     delete remainingFetchMap[pendingQueryID];
     if (!pendingQuery.isDeferred()) {
       delete remainingRequiredFetchMap[pendingQueryID];
@@ -256,14 +256,14 @@ function runQueries(
   }
 
   RelayTaskScheduler.enqueue(() => {
-    var forceIndex = fetchMode === DliteFetchModeConstants.FETCH_MODE_REFETCH ?
+    const forceIndex = fetchMode === DliteFetchModeConstants.FETCH_MODE_REFETCH ?
       generateForceIndex() : null;
 
     splitAndFlattenQueries(queries).forEach(query => {
-      var pendingFetch = storeData.getPendingQueryTracker().add(
+      const pendingFetch = storeData.getPendingQueryTracker().add(
         {query, fetchMode, forceIndex, storeData}
       );
-      var queryID = query.getID();
+      const queryID = query.getID();
       remainingFetchMap[queryID] = pendingFetch;
       if (!query.isDeferred()) {
         remainingRequiredFetchMap[queryID] = pendingFetch;
@@ -283,7 +283,7 @@ function runQueries(
         setReadyState({ready: false});
         resolveImmediate(() => {
           if (storeData.hasCacheManager()) {
-            var requiredQueryMap = mapObject(
+            const requiredQueryMap = mapObject(
               remainingRequiredFetchMap,
               value => value.getQuery()
             );

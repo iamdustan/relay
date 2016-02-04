@@ -13,8 +13,8 @@
 
 'use strict';
 
-var RelayDefaultNetworkLayer = require('RelayDefaultNetworkLayer');
-var RelayPublic = require('RelayPublic');
+const RelayDefaultNetworkLayer = require('RelayDefaultNetworkLayer');
+const RelayPublic = require('RelayPublic');
 
 // By default, assume that GraphQL is served at `/graphql` on the same domain.
 // $FlowFixMe(>=0.16.0)

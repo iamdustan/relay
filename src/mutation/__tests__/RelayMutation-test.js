@@ -24,16 +24,16 @@ const buildRQL = require('buildRQL');
 const fromGraphQL = require('fromGraphQL');
 
 describe('RelayMutation', function() {
-  var MockMutation;
-  var mockBarPointer;
-  var mockFooPointer;
+  let MockMutation;
+  let mockBarPointer;
+  let mockFooPointer;
 
-  var {getNode, getPointer} = RelayTestUtils;
+  const {getNode, getPointer} = RelayTestUtils;
 
   beforeEach(function() {
     jest.resetModuleRegistry();
 
-    var makeMockMutation = () => {
+    const makeMockMutation = () => {
       class MockMutationClass extends Relay.Mutation {}
       MockMutationClass.fragments = {
         bar: () => Relay.QL`
@@ -51,9 +51,9 @@ describe('RelayMutation', function() {
     };
     MockMutation = makeMockMutation();
 
-    var mockBarRequiredFragment =
+    const mockBarRequiredFragment =
       MockMutation.getFragment('bar').getFragment({});
-    var mockFooRequiredFragment =
+    const mockFooRequiredFragment =
       MockMutation.getFragment('foo').getFragment({});
     mockBarPointer = getPointer('bar', getNode(mockBarRequiredFragment));
     mockFooPointer = getPointer('foo', getNode(mockFooRequiredFragment));
@@ -70,7 +70,7 @@ describe('RelayMutation', function() {
     /* eslint-enable no-new */
     expect(Relay.Store.read.mock.calls.length).toBe(2);
 
-    var mockBarRequiredFragment = fromGraphQL.Fragment(buildRQL.Fragment(
+    const mockBarRequiredFragment = fromGraphQL.Fragment(buildRQL.Fragment(
       MockMutation.fragments.bar, []
     ));
     expect(Relay.Store.read.mock.calls[0]).toEqual(
@@ -83,7 +83,7 @@ describe('RelayMutation', function() {
     BadMutation.fragments = {
       foo: () => Relay.QL`query{node(id:"123"){id}}`,
     };
-    var badFragmentReference = BadMutation.getFragment('foo');
+    const badFragmentReference = BadMutation.getFragment('foo');
     expect(() => {
       badFragmentReference.getFragment();
     }).toFailInvariant(

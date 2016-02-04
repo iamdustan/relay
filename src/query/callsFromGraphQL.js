@@ -39,10 +39,10 @@ function callsFromGraphQL(
   variables: Variables
 ): Array<Call> {
   // $FlowIssue: ConcreteCall should flow into CallOrDirective
-  var callsOrDirectives: Array<CallOrDirective> = (concreteCalls: $FlowIssue);
-  var orderedCalls = [];
-  for (var ii = 0; ii < callsOrDirectives.length; ii++) {
-    var {name, value} = callsOrDirectives[ii];
+  const callsOrDirectives: Array<CallOrDirective> = (concreteCalls: $FlowIssue);
+  const orderedCalls = [];
+  for (let ii = 0; ii < callsOrDirectives.length; ii++) {
+    let {name, value} = callsOrDirectives[ii];
     if (value != null) {
       if (Array.isArray(value)) {
         value = value.map(arg => getCallValue(arg, variables));
@@ -65,7 +65,7 @@ function getCallValue(
   if (value.kind === 'CallValue') {
     return value.callValue;
   } else {
-    var variableName = value.callVariableName;
+    const variableName = value.callVariableName;
     invariant(
       variables.hasOwnProperty(variableName),
       'callsFromGraphQL(): Expected a declared value for variable, `$%s`.',

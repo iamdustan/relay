@@ -51,7 +51,7 @@ type State = {
   storeDataID: DataID;
 };
 
-var {EDGES, PAGE_INFO} = RelayConnectionInterface;
+const {EDGES, PAGE_INFO} = RelayConnectionInterface;
 const METADATA_KEYS = [
   '__status__',
   '__resolvedFragmentMapGeneration__',
@@ -68,8 +68,8 @@ function readRelayQueryData(
   dataID: DataID,
   options?: StoreReaderOptions
 ): StoreReaderResult {
-  var reader = new RelayStoreReader(storeData, options);
-  var data = reader.retrieveData(queryNode, dataID);
+  const reader = new RelayStoreReader(storeData, options);
+  const data = reader.retrieveData(queryNode, dataID);
 
   // We validate only after retrieving the data, to give our `invariant`
   // checks below a chance to fail fast.
@@ -105,16 +105,16 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
     queryNode: RelayQuery.Node,
     dataID: DataID
   ): StoreReaderResult {
-    var result = {
+    const result = {
       data: (undefined: $FlowIssue),
       dataIDs: {},
     };
-    var rangeData = this._rangeData.parseRangeClientID(dataID);
-    var status = this._recordStore.getRecordState(
+    const rangeData = this._rangeData.parseRangeClientID(dataID);
+    const status = this._recordStore.getRecordState(
       rangeData ? rangeData.dataID : dataID
     );
     if (status === RelayRecordState.EXISTENT) {
-      var state = {
+      const state = {
         componentDataID: null,
         data: undefined,
         parent: null,
@@ -143,7 +143,7 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
     if (node.isGenerated() && !this._traverseGeneratedFields) {
       return;
     }
-    var rangeInfo = state.rangeInfo;
+    const rangeInfo = state.rangeInfo;
     if (
       rangeInfo &&
       node.getSchemaName() === EDGES
@@ -188,8 +188,8 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
   }
 
   _readScalar(node: RelayQuery.Field, state: State): void {
-    var storageKey = node.getStorageKey();
-    var field = this._recordStore.getField(state.storeDataID, storageKey);
+    const storageKey = node.getStorageKey();
+    const field = this._recordStore.getField(state.storeDataID, storageKey);
     if (field === undefined) {
       return;
     } else if (field === null && !state.data) {
@@ -204,18 +204,18 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
   }
 
   _readPlural(node: RelayQuery.Field, state: State): void {
-    var storageKey = node.getStorageKey();
-    var dataIDs =
+    const storageKey = node.getStorageKey();
+    const dataIDs =
       this._recordStore.getLinkedRecordIDs(state.storeDataID, storageKey);
     if (dataIDs) {
-      var applicationName = node.getApplicationName();
-      var previousData = getDataValue(state, applicationName);
-      var nextData = dataIDs.map((dataID, ii) => {
-        var data;
+      const applicationName = node.getApplicationName();
+      const previousData = getDataValue(state, applicationName);
+      const nextData = dataIDs.map((dataID, ii) => {
+        let data;
         if (previousData instanceof Object) {
           data = previousData[ii];
         }
-        var nextState = {
+        const nextState = {
           componentDataID: null,
           data,
           parent: node,
@@ -231,10 +231,10 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
   }
 
   _readConnection(node: RelayQuery.Field, state: State): void {
-    var applicationName = node.getApplicationName();
-    var storageKey = node.getStorageKey();
-    var calls = node.getCallsWithValues();
-    var dataID = this._recordStore.getLinkedRecordID(
+    const applicationName = node.getApplicationName();
+    const storageKey = node.getStorageKey();
+    const calls = node.getCallsWithValues();
+    const dataID = this._recordStore.getLinkedRecordID(
       state.storeDataID,
       storageKey
     );
@@ -242,8 +242,8 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
       return;
     }
     enforceRangeCalls(node);
-    var metadata = this._recordStore.getRangeMetadata(dataID, calls);
-    var nextState = {
+    const metadata = this._recordStore.getRangeMetadata(dataID, calls);
+    const nextState = {
       componentDataID: this._getConnectionClientID(node, dataID),
       data: getDataValue(state, applicationName),
       parent: node,
@@ -256,13 +256,13 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
   }
 
   _readEdges(node: RelayQuery.Field, rangeInfo: RangeInfo, state: State): void {
-    var previousData = getDataValue(state, EDGES);
-    var edges = rangeInfo.filteredEdges.map((edgeData, ii) => {
-      var data;
+    const previousData = getDataValue(state, EDGES);
+    const edges = rangeInfo.filteredEdges.map((edgeData, ii) => {
+      let data;
       if (previousData instanceof Object) {
         data = previousData[ii];
       }
-      var nextState = {
+      const nextState = {
         componentDataID: null,
         data,
         parent: node,
@@ -281,34 +281,34 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
     rangeInfo: RangeInfo,
     state: State
   ): void {
-    var {pageInfo} = rangeInfo;
+    const {pageInfo} = rangeInfo;
     invariant(
       pageInfo,
       'readRelayQueryData(): Missing field, `%s`.',
       PAGE_INFO
     );
-    var info = pageInfo; // for Flow
-    var nextData;
+    const info = pageInfo; // for Flow
+    let nextData;
 
     // Page info comes from the range metadata, so we do a custom traversal here
     // which is simpler than passing through page-info-related state as a hint
     // for the normal traversal.
-    var read = child => {
+    const read = child => {
       if (child instanceof RelayQuery.Fragment) {
         if (child.isContainerFragment() && !this._traverseFragmentReferences) {
-          var fragmentPointer = new GraphQLFragmentPointer(
+          const fragmentPointer = new GraphQLFragmentPointer(
             getComponentDataID(state),
             child
           );
           nextData = nextData || {};
-          var fragmentHash =
+          const fragmentHash =
             fragmentPointer.getFragment().getConcreteNodeHash();
           nextData[fragmentHash] = fragmentPointer;
         } else {
           child.getChildren().forEach(read);
         }
       } else {
-        var field: RelayQuery.Field = (child: any);
+        const field: RelayQuery.Field = (child: any);
         if (!field.isGenerated() || this._traverseGeneratedFields) {
           nextData = nextData || {};
           nextData[field.getApplicationName()] = info[field.getStorageKey()];
@@ -325,16 +325,16 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
   }
 
   _readLinkedField(node: RelayQuery.Field, state: State): void {
-    var storageKey = node.getStorageKey();
-    var applicationName = node.getApplicationName();
-    var dataID = this._recordStore.getLinkedRecordID(
+    const storageKey = node.getStorageKey();
+    const applicationName = node.getApplicationName();
+    const dataID = this._recordStore.getLinkedRecordID(
       state.storeDataID, storageKey
     );
     if (dataID == null) {
       this._setDataValue(state, applicationName, dataID);
       return;
     }
-    var nextState = {
+    const nextState = {
       componentDataID: null,
       data: getDataValue(state, applicationName),
       parent: node,
@@ -342,7 +342,7 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
       seenDataIDs: state.seenDataIDs,
       storeDataID: dataID,
     };
-    var status = this._recordStore.getRecordState(dataID);
+    const status = this._recordStore.getRecordState(dataID);
     if (status === RelayRecordState.EXISTENT) {
       // Make sure we return at least the __dataID__.
       getDataObject(nextState);
@@ -358,7 +358,7 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
    * over any metadata fields, if present.
    */
   _setDataValue(state: State, key: string, value: mixed): void {
-    var data = getDataObject(state); // ensure __dataID__
+    const data = getDataObject(state); // ensure __dataID__
     if (value === undefined) {
       return;
     }
@@ -386,7 +386,7 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
     node: RelayQuery.Field,
     connectionID: DataID
   ): DataID {
-    var calls = node.getCallsWithValues();
+    const calls = node.getCallsWithValues();
     if (!RelayConnectionInterface.hasRangeCalls(calls)) {
       return connectionID;
     }
@@ -402,7 +402,7 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
    * so, unpacks the range metadata, stashing it into (and overriding) `state`.
    */
   _handleRangeInfo(node: RelayQuery.Field, state: State): void {
-    var rangeData = this._rangeData.parseRangeClientID(
+    const rangeData = this._rangeData.parseRangeClientID(
       state.storeDataID
     );
     if (rangeData != null) {
@@ -423,7 +423,7 @@ class RelayStoreReader extends RelayQueryVisitor<State> {
  */
 function enforceRangeCalls(parent: RelayQuery.Field): void {
   if (!parent.__hasValidatedConnectionCalls__) {
-    var calls = parent.getCallsWithValues();
+    const calls = parent.getCallsWithValues();
     if (!RelayConnectionInterface.hasRangeCalls(calls)) {
       rangeCallEnforcer.traverse(parent, parent);
     }
@@ -435,7 +435,7 @@ class RelayRangeCallEnforcer extends RelayQueryVisitor<RelayQuery.Field> {
     node: RelayQuery.Field,
     parent: RelayQuery.Field
   ): void {
-    var schemaName = node.getSchemaName();
+    const schemaName = node.getSchemaName();
     invariant(
       schemaName !== EDGES &&
       schemaName !== PAGE_INFO,
@@ -447,7 +447,7 @@ class RelayRangeCallEnforcer extends RelayQueryVisitor<RelayQuery.Field> {
     );
   }
 }
-var rangeCallEnforcer = new RelayRangeCallEnforcer();
+const rangeCallEnforcer = new RelayRangeCallEnforcer();
 
 /**
  * Returns the component-specific DataID stored in `state`, falling back to the
@@ -471,7 +471,7 @@ function getComponentDataID(state: State): DataID {
  * Retrieves `state.data`, initializing it if necessary.
  */
 function getDataObject(state: State): Object {
-  var data = state.data;
+  let data = state.data;
   if (!data) {
     data = state.data = RelayRecord.create(getComponentDataID(state));
   }
@@ -488,7 +488,7 @@ function getDataObject(state: State): Object {
  * Pre-populates `state` with a suitable `data` objects if needed.
  */
 function getDataValue(state: State, key: string): mixed {
-  var data = getDataObject(state);
+  const data = getDataObject(state);
   return data[key];
 }
 

@@ -21,10 +21,10 @@ const Relay = require('Relay');
 const RelayTestUtils = require('RelayTestUtils');
 
 describe('writeRelayQueryPayload()', () => {
-  var RelayRecordStore;
-  var RelayRecordWriter;
+  let RelayRecordStore;
+  let RelayRecordWriter;
 
-  var {getNode, writePayload} = RelayTestUtils;
+  const {getNode, writePayload} = RelayTestUtils;
 
   beforeEach(() => {
     jest.resetModuleRegistry();
@@ -37,24 +37,24 @@ describe('writeRelayQueryPayload()', () => {
 
   describe('scalar fields', () => {
     it('created with null when the response is null', () => {
-      var records = {};
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const records = {};
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: null,
           __typename: 'User',
         },
       };
-      var results = writePayload(store, writer, query, payload);
+      const results = writePayload(store, writer, query, payload);
       expect(results).toEqual({
         created: {
           '123': true,
@@ -65,28 +65,28 @@ describe('writeRelayQueryPayload()', () => {
     });
 
     it('adds null fields to an existing record when response is null', () => {
-      var records = {
+      const records = {
         '123': {
           __dataID__: '123',
           id: '123',
         },
       };
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: null,
         },
       };
-      var results = writePayload(store, writer, query, payload);
+      const results = writePayload(store, writer, query, payload);
       expect(results).toEqual({
         created: {},
         updated: {
@@ -97,29 +97,29 @@ describe('writeRelayQueryPayload()', () => {
     });
 
     it('updates fields when the response is null', () => {
-      var records = {
+      const records = {
         '123': {
           __dataID__: '123',
           id: '123',
           name: 'Joe',
         },
       };
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: null,
         },
       };
-      var results = writePayload(store, writer, query, payload);
+      const results = writePayload(store, writer, query, payload);
       expect(results).toEqual({
         created: {},
         updated: {
@@ -130,17 +130,17 @@ describe('writeRelayQueryPayload()', () => {
     });
 
     it('does not add undefined fields to a new record', () => {
-      var records = {};
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const records = {};
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: undefined,
@@ -153,22 +153,22 @@ describe('writeRelayQueryPayload()', () => {
     });
 
     it('does not add undefined fields to an existing record', () => {
-      var records = {
+      const records = {
         '123': {
           __dataID__: '123',
           id: '123',
         },
       };
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: undefined,
@@ -180,23 +180,23 @@ describe('writeRelayQueryPayload()', () => {
     });
 
     it('does not update fields when the response is undefined', () => {
-      var records = {
+      const records = {
         '123': {
           __dataID__: '123',
           id: '123',
           name: 'Joe',
         },
       };
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: undefined,
@@ -207,29 +207,29 @@ describe('writeRelayQueryPayload()', () => {
     });
 
     it('updates fields wth new scalar values', () => {
-      var records = {
+      const records = {
         '123': {
           __dataID__: '123',
           id: '123',
           name: 'Joe',
         },
       };
-      var store = new RelayRecordStore({records});
-      var writer = new RelayRecordWriter(records, {}, false);
-      var query = getNode(Relay.QL`
+      const store = new RelayRecordStore({records});
+      const writer = new RelayRecordWriter(records, {}, false);
+      const query = getNode(Relay.QL`
         query {
           node(id:"123") {
             name
           }
         }
       `);
-      var payload = {
+      const payload = {
         node: {
           id: '123',
           name: 'Joseph',
         },
       };
-      var results = writePayload(store, writer, query, payload);
+      const results = writePayload(store, writer, query, payload);
       expect(results).toEqual({
         created: {},
         updated: {

@@ -77,7 +77,7 @@ class RelayQueryPath {
    * to check if there is a parent.
    */
   getParent(): RelayQueryPath {
-    var parent = this._parent;
+    const parent = this._parent;
     invariant(
       parent,
       'RelayQueryPath.getParent(): Cannot get the parent of a root path.'

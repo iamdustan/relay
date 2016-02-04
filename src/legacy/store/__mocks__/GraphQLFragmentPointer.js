@@ -9,7 +9,7 @@
 
 'use strict';
 
-var GraphQLFragmentPointer = require.requireActual('GraphQLFragmentPointer');
+const GraphQLFragmentPointer = require.requireActual('GraphQLFragmentPointer');
 
 GraphQLFragmentPointer.createForRoot =
   jest.genMockFunction().mockImplementation(

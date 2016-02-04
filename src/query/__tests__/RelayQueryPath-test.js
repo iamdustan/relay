@@ -18,7 +18,7 @@ const RelayQueryPath = require('RelayQueryPath');
 const RelayTestUtils = require('RelayTestUtils');
 
 describe('RelayQueryPath', () => {
-  var {getNode} = RelayTestUtils;
+  const {getNode} = RelayTestUtils;
 
   beforeEach(() => {
     jest.resetModuleRegistry();
@@ -27,23 +27,23 @@ describe('RelayQueryPath', () => {
   });
 
   it('creates root paths', () => {
-    var query = getNode(Relay.QL`
+    const query = getNode(Relay.QL`
       query {
         node(id:"123") {
           id
         }
       }
     `);
-    var fragment = Relay.QL`
+    const fragment = Relay.QL`
       fragment on Node {
         name
       }
     `;
 
-    var path = new RelayQueryPath(query);
+    const path = new RelayQueryPath(query);
     expect(path.getName()).toBe(query.getName());
 
-    var pathQuery = path.getQuery(getNode(fragment));
+    const pathQuery = path.getQuery(getNode(fragment));
     expect(pathQuery).toEqualQueryRoot(getNode(Relay.QL`
       query {
         node(id:"123") {
@@ -56,19 +56,19 @@ describe('RelayQueryPath', () => {
   });
 
   it('creates root paths for argument-less root calls with IDs', () => {
-    var query = getNode(Relay.QL`
+    const query = getNode(Relay.QL`
       query {
         me {
           id
         }
       }
     `);
-    var fragment = Relay.QL`
+    const fragment = Relay.QL`
       fragment on Actor {
         name
       }
     `;
-    var path = new RelayQueryPath(query);
+    const path = new RelayQueryPath(query);
     expect(path.getQuery(getNode(fragment))).toEqualQueryRoot(getNode(Relay.QL`
       query {
         me {
@@ -81,7 +81,7 @@ describe('RelayQueryPath', () => {
   });
 
   it('creates root paths for argument-less root calls without IDs', () => {
-    var query = getNode(Relay.QL`
+    const query = getNode(Relay.QL`
       query {
         viewer {
           actor {
@@ -90,14 +90,14 @@ describe('RelayQueryPath', () => {
         }
       }
     `);
-    var fragment = Relay.QL`
+    const fragment = Relay.QL`
       fragment on Viewer {
         actor {
           name
         }
       }
     `;
-    var path = new RelayQueryPath(query);
+    const path = new RelayQueryPath(query);
     expect(path.getQuery(getNode(fragment))).toEqualQueryRoot(getNode(Relay.QL`
       query {
         viewer {
@@ -109,29 +109,29 @@ describe('RelayQueryPath', () => {
   });
 
   it('creates paths to non-refetchable fields', () => {
-    var query = getNode(Relay.QL`
+    const query = getNode(Relay.QL`
       query {
         node(id:"123") {
           id
         }
       }
     `);
-    var address = getNode(Relay.QL`
+    const address = getNode(Relay.QL`
       fragment on Actor {
         address {
           city
         }
       }
     `).getFieldByStorageKey('address');
-    var city = getNode(Relay.QL`
+    const city = getNode(Relay.QL`
       fragment on StreetAddress {
         city
       }
     `).getFieldByStorageKey('city');
 
     // address is not refetchable, has client ID
-    var root = new RelayQueryPath(query);
-    var path = root.getPath(address, 'client:1');
+    const root = new RelayQueryPath(query);
+    const path = root.getPath(address, 'client:1');
     expect(path.getQuery(city)).toEqualQueryRoot(getNode(Relay.QL`
       query {
         node(id:"123") {
@@ -146,7 +146,7 @@ describe('RelayQueryPath', () => {
   });
 
   it('creates roots for refetchable fields', () => {
-    var query = getNode(Relay.QL`
+    const query = getNode(Relay.QL`
       query {
         viewer {
           actor {
@@ -155,16 +155,16 @@ describe('RelayQueryPath', () => {
         }
       }
     `);
-    var actor = query.getFieldByStorageKey('actor');
-    var fragment = Relay.QL`
+    const actor = query.getFieldByStorageKey('actor');
+    const fragment = Relay.QL`
       fragment on Node {
         name
       }
     `;
 
     // actor has an ID and is refetchable
-    var root = new RelayQueryPath(query);
-    var path = root.getPath(actor, '123');
+    const root = new RelayQueryPath(query);
+    const path = root.getPath(actor, '123');
     expect(path.getQuery(getNode(fragment))).toEqualQueryRoot(getNode(Relay.QL`
       query {
         node(id:"123") {

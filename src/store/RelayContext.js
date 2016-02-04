@@ -137,7 +137,7 @@ class RelayContext {
   ): Array<?StoreReaderData> {
     const queuedStore = this._storeData.getQueuedStore();
     const storageKey = root.getStorageKey();
-    var results = [];
+    const results = [];
     forEachRootCallArg(root, identifyingArgValue => {
       let data;
       const dataID = queuedStore.getDataID(storageKey, identifyingArgValue);
@@ -157,7 +157,7 @@ class RelayContext {
     fragment: RelayQuery.Fragment,
     dataID: DataID
   ): Observable<?StoreReaderData> {
-    var fragmentPointer = new GraphQLFragmentPointer(
+    const fragmentPointer = new GraphQLFragmentPointer(
       fragment.isPlural()? [dataID] : dataID,
       fragment
     );

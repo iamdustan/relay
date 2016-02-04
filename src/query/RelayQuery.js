@@ -118,7 +118,7 @@ class RelayQueryNode {
     route: RelayMetaRoute,
     variables: Variables
   ): RelayQueryNode {
-    var node = createNode(concreteNode, route, variables);
+    const node = createNode(concreteNode, route, variables);
     invariant(
       node instanceof RelayQueryNode,
       'RelayQueryNode.create(): ' +
@@ -179,8 +179,8 @@ class RelayQueryNode {
       return this;
     }
 
-    var prevChildren = this.getChildren();
-    var nextChildren = cloneChildren(prevChildren, children);
+    const prevChildren = this.getChildren();
+    const nextChildren = cloneChildren(prevChildren, children);
 
     if (!nextChildren.length) {
       return null;
@@ -188,7 +188,7 @@ class RelayQueryNode {
       return this;
     }
 
-    var clone = RelayQueryNode.create(
+    const clone = RelayQueryNode.create(
       this.__concreteNode__,
       this.__route__,
       this.__variables__
@@ -211,7 +211,7 @@ class RelayQueryNode {
           if (concreteChild == null) {
             return;
           }
-          var node = createNode(
+          const node = createNode(
             concreteChild,
             this.__route__,
             this.__variables__
@@ -258,12 +258,12 @@ class RelayQueryNode {
   }
 
   getFieldByStorageKey(storageKey: string): ?RelayQueryField {
-    var fieldMap = this.__fieldMap__;
+    let fieldMap = this.__fieldMap__;
     if (!fieldMap) {
       fieldMap = {};
-      var child;
-      var children = this.getChildren();
-      for (var ii = 0; ii < children.length; ii++) {
+      let child;
+      const children = this.getChildren();
+      for (let ii = 0; ii < children.length; ii++) {
         child = children[ii];
         if (child instanceof RelayQueryField) {
           fieldMap[child.getStorageKey()] = child;
@@ -287,7 +287,7 @@ class RelayQueryNode {
   }
 
   hasDeferredDescendant(): boolean {
-    var hasDeferredDescendant = this.__hasDeferredDescendant__;
+    let hasDeferredDescendant = this.__hasDeferredDescendant__;
     if (hasDeferredDescendant == null) {
       hasDeferredDescendant =
         this.canHaveSubselections() &&
@@ -309,8 +309,8 @@ class RelayQueryNode {
    * Determine if `this` and `that` are deeply equal.
    */
   equals(that: RelayQueryNode): boolean {
-    var thisChildren = this.getChildren();
-    var thatChildren = that.getChildren();
+    const thisChildren = this.getChildren();
+    const thatChildren = that.getChildren();
 
     return thisChildren === thatChildren || (
       thisChildren.length === thatChildren.length &&
@@ -389,7 +389,7 @@ class RelayQueryRoot extends RelayQueryNode {
       name,
       type,
     });
-    var root = new RelayQueryRoot(
+    const root = new RelayQueryRoot(
       concreteRoot,
       RelayMetaRoute.get('$RelayQuery'),
       {}
@@ -445,7 +445,7 @@ class RelayQueryRoot extends RelayQueryNode {
   }
 
   getID(): string {
-    var id = this.__id__;
+    let id = this.__id__;
     if (id == null) {
       id = 'q' + _nextQueryID++;
       this.__id__ = id;
@@ -458,7 +458,7 @@ class RelayQueryRoot extends RelayQueryNode {
     if (batchCall === undefined) {
       const concreteCalls = (this.__concreteNode__: ConcreteQuery).calls;
       if (concreteCalls) {
-        var callArg = concreteCalls[0] && concreteCalls[0].value;
+        const callArg = concreteCalls[0] && concreteCalls[0].value;
         if (
           callArg != null &&
           !Array.isArray(callArg) &&
@@ -671,8 +671,8 @@ class RelayQueryMutation extends RelayQueryOperation {
     children?: ?Array<RelayQueryNode>,
     metadata?: ?ConcreteOperationMetadata
   ): RelayQueryMutation {
-    var nextChildren = children ? children.filter(child => !!child) : [];
-    var concreteMutation = QueryBuilder.createMutation({
+    const nextChildren = children ? children.filter(child => !!child) : [];
+    const concreteMutation = QueryBuilder.createMutation({
       calls: [QueryBuilder.createCall(
         callName,
         QueryBuilder.createCallVariable('input')
@@ -681,7 +681,7 @@ class RelayQueryMutation extends RelayQueryOperation {
       name,
       responseType,
     });
-    var mutation = new RelayQueryMutation(
+    const mutation = new RelayQueryMutation(
       concreteMutation,
       RelayMetaRoute.get('$RelayQuery'),
       {input: callValue || ''}
@@ -775,13 +775,13 @@ class RelayQueryFragment extends RelayQueryNode {
     children?: ?Array<RelayQueryNode>,
     metadata?: ?{[key: string]: mixed}
   ): RelayQueryFragment {
-    var nextChildren = children ? children.filter(child => !!child) : [];
-    var concreteFragment = QueryBuilder.createFragment({
+    const nextChildren = children ? children.filter(child => !!child) : [];
+    const concreteFragment = QueryBuilder.createFragment({
       name,
       type,
       metadata,
     });
-    var fragment = new RelayQueryFragment(
+    const fragment = new RelayQueryFragment(
       concreteFragment,
       RelayMetaRoute.get('$RelayQuery'),
       {},
@@ -892,8 +892,8 @@ class RelayQueryFragment extends RelayQueryNode {
   isPlural(): boolean {
     const metadata = (this.__concreteNode__: ConcreteFragment).metadata;
     return !!(
-      metadata.isPlural ||  // FB Printer
-      metadata.plural       // OSS Printer from `@relay`
+      (metadata.isPlural || // FB Printer
+      metadata.plural)       // OSS Printer from `@relay`
     );
   }
 
@@ -915,7 +915,7 @@ class RelayQueryFragment extends RelayQueryNode {
   }
 
   clone(children: NextChildren): ?RelayQueryNode {
-    var clone = super.clone(children);
+    const clone = super.clone(children);
     if (clone !== this &&
         clone instanceof RelayQueryFragment) {
       clone.__isCloned__ = true;
@@ -990,8 +990,8 @@ class RelayQueryField extends RelayQueryNode {
     metadata?: ?ConcreteFieldMetadata;
     type: string;
   }): RelayQueryField {
-    var nextChildren = children ? children.filter(child => !!child) : [];
-    var concreteField = QueryBuilder.createField({
+    const nextChildren = children ? children.filter(child => !!child) : [];
+    const concreteField = QueryBuilder.createField({
       alias,
       calls: calls ? callsToGraphQL(calls) : null,
       directives: directives ? directivesToGraphQL(directives) : null,
@@ -999,7 +999,7 @@ class RelayQueryField extends RelayQueryNode {
       metadata,
       type,
     });
-    var field = new RelayQueryField(
+    const field = new RelayQueryField(
       concreteField,
       RelayMetaRoute.get('$RelayQuery'),
       {}
@@ -1237,7 +1237,7 @@ class RelayQueryField extends RelayQueryNode {
   }
 
   cloneAsRefQueryDependency(): RelayQueryField {
-    var field = new RelayQueryField(
+    const field = new RelayQueryField(
       this.__concreteNode__,
       this.__route__,
       this.__variables__
@@ -1263,16 +1263,16 @@ class RelayQueryField extends RelayQueryNode {
 
     // use `clone()` if call values do not change
     if (areEqual(this.getCallsWithValues(), calls)) {
-      var clone: RelayQueryField = (this.clone(children): any);
+      const clone: RelayQueryField = (this.clone(children): any);
       return clone;
     }
 
-    var nextChildren = cloneChildren(this.getChildren(), children);
+    const nextChildren = cloneChildren(this.getChildren(), children);
     if (!nextChildren.length) {
       return null;
     }
 
-    var field = new RelayQueryField(
+    const field = new RelayQueryField(
       this.__concreteNode__,
       this.__route__,
       this.__variables__
@@ -1384,10 +1384,10 @@ function createMemoizedFragment(
   variables: Variables,
   metadata: FragmentMetadata
 ): RelayQueryFragment {
-  var cacheKey = route.name + ':' + stableStringify(variables) + ':' +
+  const cacheKey = route.name + ':' + stableStringify(variables) + ':' +
     stableStringify(metadata);
-  var fragment = (concreteFragment: any).__cachedFragment__;
-  var fragmentCacheKey = (concreteFragment: any).__cacheKey__;
+  let fragment = (concreteFragment: any).__cachedFragment__;
+  const fragmentCacheKey = (concreteFragment: any).__cacheKey__;
   if (!fragment || fragmentCacheKey !== cacheKey) {
     fragment = new RelayQueryFragment(
       concreteFragment,
@@ -1410,12 +1410,12 @@ function cloneChildren(
   prevChildren: Array<RelayQueryNode>,
   nextChildren: NextChildren
 ): Array<RelayQueryNode> {
-  var children = [];
-  var isSameChildren = true;
+  const children = [];
+  let isSameChildren = true;
 
-  var prevIndex = 0;
-  for (var ii = 0; ii < nextChildren.length; ii++) {
-    var child = nextChildren[ii];
+  let prevIndex = 0;
+  for (let ii = 0; ii < nextChildren.length; ii++) {
+    const child = nextChildren[ii];
     if (child) {
       children.push(child);
       isSameChildren = isSameChildren && child === prevChildren[prevIndex++];

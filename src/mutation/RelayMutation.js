@@ -242,7 +242,7 @@ class RelayMutation<Tp: Object> {
 
     const resolvedProps = {...props};
     forEachObject(fragments, (fragmentBuilder, fragmentName) => {
-      var propValue = props[fragmentName];
+      const propValue = props[fragmentName];
       warning(
         propValue !== undefined,
         'RelayMutation: Expected data for fragment `%s` to be supplied to ' +
@@ -255,13 +255,13 @@ class RelayMutation<Tp: Object> {
         return;
       }
 
-      var fragment = fromGraphQL.Fragment(buildMutationFragment(
+      const fragment = fromGraphQL.Fragment(buildMutationFragment(
         this.constructor.name,
         fragmentName,
         fragmentBuilder,
         initialVariables
       ));
-      var fragmentHash = fragment.getConcreteNodeHash();
+      const fragmentHash = fragment.getConcreteNodeHash();
 
       if (fragment.isPlural()) {
         invariant(
@@ -271,8 +271,8 @@ class RelayMutation<Tp: Object> {
           fragmentName,
           this.constructor.name
         );
-        var dataIDs = propValue.reduce((acc, item, ii) => {
-          var eachFragmentPointer = item[fragmentHash];
+        const dataIDs = propValue.reduce((acc, item, ii) => {
+          const eachFragmentPointer = item[fragmentHash];
           invariant(
             eachFragmentPointer,
             'RelayMutation: Invalid prop `%s` supplied to `%s`, ' +
@@ -293,9 +293,9 @@ class RelayMutation<Tp: Object> {
           fragmentName,
           this.constructor.name
         );
-        var fragmentPointer = propValue[fragmentHash];
+        const fragmentPointer = propValue[fragmentHash];
         if (fragmentPointer) {
-          var dataID = fragmentPointer.getDataID();
+          const dataID = fragmentPointer.getDataID();
           resolvedProps[fragmentName] = RelayStore.read(fragment, dataID);
         } else {
           if (__DEV__) {
@@ -323,8 +323,8 @@ class RelayMutation<Tp: Object> {
     variableMapping?: Variables
   ): RelayFragmentReference {
     // TODO: Unify fragment API for containers and mutations, #7860172.
-    var fragments = this.fragments;
-    var fragmentBuilder = fragments[fragmentName];
+    const fragments = this.fragments;
+    const fragmentBuilder = fragments[fragmentName];
     if (!fragmentBuilder) {
       invariant(
         false,
@@ -337,7 +337,7 @@ class RelayMutation<Tp: Object> {
     }
 
     const initialVariables = this.initialVariables || {};
-    var prepareVariables = this.prepareVariables;
+    const prepareVariables = this.prepareVariables;
 
     return RelayFragmentReference.createForContainer(
       () => buildMutationFragment(
@@ -362,7 +362,7 @@ function buildMutationFragment(
   fragmentBuilder: RelayQLFragmentBuilder,
   variables: Variables
 ): ConcreteFragment {
-  var fragment = buildRQL.Fragment(
+  const fragment = buildRQL.Fragment(
     fragmentBuilder,
     variables
   );

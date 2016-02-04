@@ -22,8 +22,8 @@ const RelayStoreData = require('RelayStoreData');
 const RelayTestUtils = require('RelayTestUtils');
 
 describe('RelayContainer.hasOptimisticUpdate', () => {
-  var MockContainer;
-  var RelayTestRenderer;
+  let MockContainer;
+  let RelayTestRenderer;
 
   beforeEach(() => {
     jest.resetModuleRegistry();
@@ -46,7 +46,7 @@ describe('RelayContainer.hasOptimisticUpdate', () => {
   });
 
   it('throws for invalid records', () => {
-    var instance = RelayTestRenderer.render(genMockPointer => {
+    const instance = RelayTestRenderer.render(genMockPointer => {
       return <MockContainer foo={genMockPointer('123')} />;
     });
 
@@ -59,11 +59,11 @@ describe('RelayContainer.hasOptimisticUpdate', () => {
   });
 
   it('is only true for queued records', () => {
-    var storeData = RelayStoreData.getDefaultInstance();
-    var recordWriter =
+    const storeData = RelayStoreData.getDefaultInstance();
+    const recordWriter =
       storeData.getRecordWriterForOptimisticMutation('mutation');
     recordWriter.putRecord('123', 'Type');
-    var instance = RelayTestRenderer.render(genMockPointer => {
+    const instance = RelayTestRenderer.render(genMockPointer => {
       return <MockContainer foo={genMockPointer('123')} />;
     });
 
@@ -74,7 +74,7 @@ describe('RelayContainer.hasOptimisticUpdate', () => {
     RelayStoreData.getDefaultInstance().getRecordWriter()
       .putRecord('123', 'Type');
 
-    var instance = RelayTestRenderer.render(genMockPointer => {
+    const instance = RelayTestRenderer.render(genMockPointer => {
       return <MockContainer foo={genMockPointer('123')} />;
     });
     expect(instance.hasOptimisticUpdate({__dataID__: '123'})).toBe(false);

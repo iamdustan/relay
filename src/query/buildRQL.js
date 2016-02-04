@@ -33,18 +33,18 @@ export type RelayQLQueryBuilder =
   (Component: RelayContainer, params: Variables) => RelayConcreteNode;
 
 // Cache results of executing fragment query builders.
-var fragmentCache = new Map();
+const fragmentCache = new Map();
 
 // Cache results of executing component-specific route query builders.
-var queryCache = new Map();
+const queryCache = new Map();
 
 function isDeprecatedCallWithArgCountGreaterThan(
   nodeBuilder: Function,
   count: number
 ): boolean {
-  var argLength = nodeBuilder.length;
+  let argLength = nodeBuilder.length;
   if (__DEV__) {
-    var mockImpl = nodeBuilder;
+    let mockImpl = nodeBuilder;
     while (mockImpl && mockImpl._getMockImplementation) {
       mockImpl = mockImpl._getMockImplementation();
     }
@@ -65,14 +65,14 @@ function isDeprecatedCallWithArgCountGreaterThan(
  * node type), these will return `undefined`. This is not to be confused with
  * a return value of `null`, which may result from the lack of a node.
  */
-var buildRQL = {
+const buildRQL = {
   Fragment(
     fragmentBuilder: RelayQLFragmentBuilder,
     values: Variables
   ): ?ConcreteFragment {
-    var node = fragmentCache.get(fragmentBuilder);
+    let node = fragmentCache.get(fragmentBuilder);
     if (!node) {
-      var variables = toVariables(values);
+      const variables = toVariables(values);
       invariant(
         !isDeprecatedCallWithArgCountGreaterThan(fragmentBuilder, 1),
         'Relay.QL: Deprecated usage detected. If you are trying to define a ' +

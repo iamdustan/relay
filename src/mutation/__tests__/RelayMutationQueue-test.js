@@ -28,9 +28,9 @@ const flattenRelayQuery = require('flattenRelayQuery');
 const fromGraphQL = require('fromGraphQL');
 
 describe('RelayMutationQueue', () => {
-  var RelayNetworkLayer;
-  var storeData;
-  var mutationQueue;
+  let RelayNetworkLayer;
+  let storeData;
+  let mutationQueue;
 
   beforeEach(() => {
     jest.resetModuleRegistry();
@@ -44,7 +44,7 @@ describe('RelayMutationQueue', () => {
   });
 
   describe('constructor', () => {
-    var mockMutation, mutationNode, fatQuery;
+    let mockMutation, mutationNode, fatQuery;
 
     beforeEach(() => {
       mutationNode = Relay.QL`mutation{commentCreate(input:$input)}`;
@@ -61,7 +61,7 @@ describe('RelayMutationQueue', () => {
     });
 
     it('does not update store if there is no optimistic response', () => {
-      var transaction = mutationQueue.createTransaction(mockMutation);
+      const transaction = mutationQueue.createTransaction(mockMutation);
 
       expect(transaction.getStatus()).toBe(
         RelayMutationTransactionStatus.UNCOMMITTED
@@ -70,13 +70,13 @@ describe('RelayMutationQueue', () => {
     });
 
     it('updates store if there is a optimistic response', () => {
-      var input = {foo: 'bar'};
+      const input = {foo: 'bar'};
       mockMutation.getVariables.mockReturnValue(input);
       mockMutation.getOptimisticResponse.mockReturnValue({});
       mockMutation.getOptimisticConfigs.mockReturnValue('optimisticConfigs');
       RelayMutationQuery.buildQuery.mockReturnValue('optimisticQuery');
 
-      var transaction = mutationQueue.createTransaction(mockMutation);
+      const transaction = mutationQueue.createTransaction(mockMutation);
 
       expect(transaction.getStatus()).toBe(
         RelayMutationTransactionStatus.UNCOMMITTED
@@ -132,7 +132,7 @@ describe('RelayMutationQueue', () => {
   });
 
   describe('commit', () => {
-    var mockMutation1, mockMutation2, mockMutation3, mutationNode, fatQuery;
+    let mockMutation1, mockMutation2, mockMutation3, mutationNode, fatQuery;
 
     beforeEach(() => {
       fatQuery = Relay.QL`fragment on Comment @relay(pattern: true) {
@@ -156,7 +156,7 @@ describe('RelayMutationQueue', () => {
     });
 
     it('throws if commit is called more than once', () => {
-      var transaction = mutationQueue.createTransaction(mockMutation1);
+      const transaction = mutationQueue.createTransaction(mockMutation1);
       transaction.commit();
       expect(() => transaction.commit()).toThrowError(
         'RelayMutationTransaction: Only transactions with status ' +
@@ -165,44 +165,44 @@ describe('RelayMutationQueue', () => {
     });
 
     it('calls `onSuccess` with response', () => {
-      var successCallback1 = jest.genMockFunction();
-      var transaction1 = mutationQueue.createTransaction(
+      const successCallback1 = jest.genMockFunction();
+      const transaction1 = mutationQueue.createTransaction(
         mockMutation1,
         {onSuccess: successCallback1}
       );
       transaction1.commit();
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
 
-      var request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
+      const request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
       request.resolve({response: {'res': 'ponse'}});
       jest.runAllTimers();
       expect(successCallback1.mock.calls).toEqual([[{'res': 'ponse'}]]);
     });
 
     it('calls `onFailure` with transaction', () => {
-      var failureCallback1 = jest.genMockFunction().mockImplementation(
+      const failureCallback1 = jest.genMockFunction().mockImplementation(
         transaction => {
           expect(transaction).toBe(transaction1);
           expect(transaction.getError()).toBe(mockError);
         }
       );
-      var transaction1 = mutationQueue.createTransaction(
+      const transaction1 = mutationQueue.createTransaction(
         mockMutation1,
         {onFailure: failureCallback1}
       );
-      var mockError = new Error('error');
+      const mockError = new Error('error');
       transaction1.commit();
 
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
-      var request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
+      const request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
       request.reject(mockError);
       jest.runAllTimers();
       expect(failureCallback1).toBeCalled();
     });
 
     it('queues commits for colliding transactions', () => {
-      var successCallback1 = jest.genMockFunction();
-      var transaction1 = mutationQueue.createTransaction(
+      const successCallback1 = jest.genMockFunction();
+      const transaction1 = mutationQueue.createTransaction(
         mockMutation1,
         {onSuccess: successCallback1}
       );
@@ -212,7 +212,7 @@ describe('RelayMutationQueue', () => {
         RelayMutationTransactionStatus.COMMITTING
       );
 
-      var transaction2 = mutationQueue.createTransaction(mockMutation1);
+      const transaction2 = mutationQueue.createTransaction(mockMutation1);
       transaction2.commit();
 
       expect(transaction2.getStatus()).toBe(
@@ -220,7 +220,7 @@ describe('RelayMutationQueue', () => {
       );
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
 
-      var request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
+      const request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
       request.resolve({response: {}});
       jest.runAllTimers();
 
@@ -232,7 +232,7 @@ describe('RelayMutationQueue', () => {
     });
 
     it('does not queue commits for non-colliding transactions', () => {
-      var transaction1 = mutationQueue.createTransaction(mockMutation1);
+      const transaction1 = mutationQueue.createTransaction(mockMutation1);
       transaction1.commit();
 
       expect(transaction1.getStatus()).toBe(
@@ -240,7 +240,7 @@ describe('RelayMutationQueue', () => {
       );
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
 
-      var transaction2 = mutationQueue.createTransaction(mockMutation2);
+      const transaction2 = mutationQueue.createTransaction(mockMutation2);
       transaction2.commit();
 
       expect(transaction2.getStatus()).toBe(
@@ -250,7 +250,7 @@ describe('RelayMutationQueue', () => {
     });
 
     it('does not queue commits for `null` collision key transactions', () => {
-      var transaction1 = mutationQueue.createTransaction(mockMutation3);
+      const transaction1 = mutationQueue.createTransaction(mockMutation3);
       transaction1.commit();
 
       expect(transaction1.getStatus()).toBe(
@@ -258,7 +258,7 @@ describe('RelayMutationQueue', () => {
       );
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
 
-      var transaction2 = mutationQueue.createTransaction(mockMutation3);
+      const transaction2 = mutationQueue.createTransaction(mockMutation3);
       transaction2.commit();
 
       expect(transaction2.getStatus()).toBe(
@@ -268,7 +268,7 @@ describe('RelayMutationQueue', () => {
     });
 
     it('empties collision queue after a failure', () => {
-      var failureCallback1 = jest.genMockFunction().mockImplementation(
+      const failureCallback1 = jest.genMockFunction().mockImplementation(
         (transaction, preventAutoRollback) => {
           expect(transaction).toBe(transaction1);
           expect(transaction.getStatus()).toBe(
@@ -276,7 +276,7 @@ describe('RelayMutationQueue', () => {
           );
         }
       );
-      var transaction1 = mutationQueue.createTransaction(
+      const transaction1 = mutationQueue.createTransaction(
         mockMutation1,
         {onFailure: failureCallback1}
       );
@@ -287,7 +287,7 @@ describe('RelayMutationQueue', () => {
       );
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
 
-      var failureCallback2 = jest.genMockFunction().mockImplementation(
+      const failureCallback2 = jest.genMockFunction().mockImplementation(
         (transaction, preventAutoRollback) => {
           expect(transaction).toBe(transaction2);
           expect(transaction.getStatus()).toBe(
@@ -297,7 +297,7 @@ describe('RelayMutationQueue', () => {
           preventAutoRollback();
         }
       );
-      var transaction2 = mutationQueue.createTransaction(
+      const transaction2 = mutationQueue.createTransaction(
         mockMutation1,
         {onFailure: failureCallback2}
       );
@@ -308,7 +308,7 @@ describe('RelayMutationQueue', () => {
       );
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
 
-      var request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
+      const request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
       request.reject(new Error('error'));
       jest.runAllTimers();
 
@@ -321,7 +321,7 @@ describe('RelayMutationQueue', () => {
         RelayMutationTransactionStatus.COLLISION_COMMIT_FAILED
       );
 
-      var transaction3 = mutationQueue.createTransaction(mockMutation1);
+      const transaction3 = mutationQueue.createTransaction(mockMutation1);
       transaction3.commit();
 
       expect(transaction3.getStatus()).toBe(
@@ -331,7 +331,7 @@ describe('RelayMutationQueue', () => {
     });
 
     it('rolls back colliding transactions on failure unless prevented', () => {
-      var failureCallback1 = jest.genMockFunction().mockImplementation(
+      const failureCallback1 = jest.genMockFunction().mockImplementation(
         (transaction, preventAutoRollback) => {
           expect(transaction).toBe(transaction1);
           expect(transaction.getStatus()).toBe(
@@ -340,13 +340,13 @@ describe('RelayMutationQueue', () => {
           preventAutoRollback();
         }
       );
-      var transaction1 = mutationQueue.createTransaction(
+      const transaction1 = mutationQueue.createTransaction(
         mockMutation1,
         {onFailure: failureCallback1}
       );
       transaction1.commit();
 
-      var failureCallback2 = jest.genMockFunction().mockImplementation(
+      const failureCallback2 = jest.genMockFunction().mockImplementation(
         (transaction, preventAutoRollback) => {
           expect(transaction).toBe(transaction2);
           expect(transaction.getStatus()).toBe(
@@ -354,13 +354,13 @@ describe('RelayMutationQueue', () => {
           );
         }
       );
-      var transaction2 = mutationQueue.createTransaction(
+      const transaction2 = mutationQueue.createTransaction(
         mockMutation1,
         {onFailure: failureCallback2}
       );
       transaction2.commit();
 
-      var failureCallback3 = jest.genMockFunction().mockImplementation(
+      const failureCallback3 = jest.genMockFunction().mockImplementation(
         (transaction, preventAutoRollback) => {
           expect(transaction).toBe(transaction3);
           expect(transaction.getStatus()).toBe(
@@ -369,7 +369,7 @@ describe('RelayMutationQueue', () => {
           preventAutoRollback();
         }
       );
-      var transaction3 = mutationQueue.createTransaction(
+      const transaction3 = mutationQueue.createTransaction(
         mockMutation1,
         {onFailure: failureCallback3}
       );
@@ -385,15 +385,15 @@ describe('RelayMutationQueue', () => {
         RelayMutationTransactionStatus.COMMIT_QUEUED
       );
 
-      var failureCallback4 = jest.genMockFunction().mockImplementation();
-      var transaction4 = mutationQueue.createTransaction(
+      const failureCallback4 = jest.genMockFunction().mockImplementation();
+      const transaction4 = mutationQueue.createTransaction(
         mockMutation2,
         {onFailure: failureCallback4}
       );
       transaction4.commit();
 
-      var failureCallback5 = jest.genMockFunction().mockImplementation();
-      var transaction5 = mutationQueue.createTransaction(
+      const failureCallback5 = jest.genMockFunction().mockImplementation();
+      const transaction5 = mutationQueue.createTransaction(
         mockMutation2,
         {onFailure: failureCallback5}
       );
@@ -407,7 +407,7 @@ describe('RelayMutationQueue', () => {
       );
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(2);
 
-      var request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
+      const request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
       request.reject(new Error('error'));
       jest.runAllTimers();
 
@@ -435,7 +435,7 @@ describe('RelayMutationQueue', () => {
   });
 
   describe('recommit', () => {
-    var mockMutation, mutationNode, fatQuery;
+    let mockMutation, mutationNode, fatQuery;
 
     beforeEach(() => {
       fatQuery = Relay.QL`fragment on Comment @relay(pattern: true) {
@@ -454,13 +454,13 @@ describe('RelayMutationQueue', () => {
     });
 
     it('re-queues the transaction', () => {
-      var successCallback1 = jest.genMockFunction();
-      var failureCallback1 = jest.genMockFunction().mockImplementation(
+      const successCallback1 = jest.genMockFunction();
+      const failureCallback1 = jest.genMockFunction().mockImplementation(
         (transaction, preventAutoRollback) => {
           preventAutoRollback();
         }
       );
-      var transaction1 = mutationQueue.createTransaction(
+      const transaction1 = mutationQueue.createTransaction(
         mockMutation,
         {
           onSuccess: successCallback1,
@@ -470,7 +470,7 @@ describe('RelayMutationQueue', () => {
       transaction1.commit();
 
       expect(RelayNetworkLayer.sendMutation.mock.calls.length).toBe(1);
-      var request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
+      let request = RelayNetworkLayer.sendMutation.mock.calls[0][0];
       request.reject(new Error('error'));
       jest.runAllTimers();
 
@@ -479,8 +479,8 @@ describe('RelayMutationQueue', () => {
         RelayMutationTransactionStatus.COMMIT_FAILED
       );
 
-      var successCallback2 = jest.genMockFunction();
-      var transaction2 = mutationQueue.createTransaction(
+      const successCallback2 = jest.genMockFunction();
+      const transaction2 = mutationQueue.createTransaction(
         mockMutation,
         {onSuccess: successCallback2}
       );

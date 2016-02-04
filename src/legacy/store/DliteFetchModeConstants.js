@@ -14,7 +14,7 @@
 
 const keyMirror = require('keyMirror');
 
-var DliteFetchModeConstants = keyMirror({
+const DliteFetchModeConstants = keyMirror({
   FETCH_MODE_CLIENT: null,
   FETCH_MODE_PRELOAD: null,
   FETCH_MODE_REFETCH: null,

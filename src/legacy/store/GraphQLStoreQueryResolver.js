@@ -70,7 +70,7 @@ class GraphQLStoreQueryResolver {
   resolve(
     fragmentPointer: GraphQLFragmentPointer
   ): ?(StoreReaderData | Array<?StoreReaderData>) {
-    var resolver = this._resolver;
+    let resolver = this._resolver;
     if (!resolver) {
       resolver = this._fragmentPointer.getFragment().isPlural() ?
         new GraphQLStorePluralQueryResolver(this._storeData, this._callback) :
@@ -112,13 +112,13 @@ class GraphQLStorePluralQueryResolver {
    * new array will be returned.
    */
   resolve(fragmentPointer: GraphQLFragmentPointer): Array<?StoreReaderData> {
-    var prevResults = this._results;
-    var nextResults;
+    const prevResults = this._results;
+    let nextResults;
 
-    var nextIDs = fragmentPointer.getDataIDs();
-    var prevLength = prevResults.length;
-    var nextLength = nextIDs.length;
-    var resolvers = this._resolvers;
+    const nextIDs = fragmentPointer.getDataIDs();
+    const prevLength = prevResults.length;
+    const nextLength = nextIDs.length;
+    const resolvers = this._resolvers;
 
     // Ensure that we have exactly `nextLength` resolvers.
     while (resolvers.length < nextLength) {
@@ -134,8 +134,8 @@ class GraphQLStorePluralQueryResolver {
     if (prevLength !== nextLength) {
       nextResults = [];
     }
-    for (var ii = 0; ii < nextLength; ii++) {
-      var nextResult = resolvers[ii].resolve(fragmentPointer, nextIDs[ii]);
+    for (let ii = 0; ii < nextLength; ii++) {
+      const nextResult = resolvers[ii].resolve(fragmentPointer, nextIDs[ii]);
       if (nextResults || ii >= prevLength || nextResult !== prevResults[ii]) {
         nextResults = nextResults || prevResults.slice(0, ii);
         nextResults.push(nextResult);
@@ -193,14 +193,14 @@ class GraphQLStoreSingleQueryResolver {
     fragmentPointer: GraphQLFragmentPointer,
     nextPluralID?: ?DataID
   ): ?StoreReaderData {
-    var nextFragment = fragmentPointer.getFragment();
-    var prevFragment = this._fragment;
+    const nextFragment = fragmentPointer.getFragment();
+    const prevFragment = this._fragment;
 
-    var nextID = nextPluralID || fragmentPointer.getDataID();
-    var prevID = this._resultID;
-    var nextResult;
-    var prevResult = this._result;
-    var subscribedIDs;
+    const nextID = nextPluralID || fragmentPointer.getDataID();
+    const prevID = this._resultID;
+    let nextResult;
+    const prevResult = this._result;
+    let subscribedIDs;
 
     if (
       prevFragment != null &&
@@ -240,7 +240,7 @@ class GraphQLStoreSingleQueryResolver {
       if (subscribedIDs) {
         // always subscribe to the root ID
         subscribedIDs[nextID] = true;
-        var changeEmitter = this._storeData.getChangeEmitter();
+        const changeEmitter = this._storeData.getChangeEmitter();
         this._subscription = changeEmitter.addListenerForIDs(
           Object.keys(subscribedIDs),
           this._handleChange.bind(this)
@@ -278,7 +278,7 @@ class GraphQLStoreSingleQueryResolver {
     fragment: RelayQuery.Fragment,
     dataID: DataID
   ): [?StoreReaderData, DataIDSet] {
-    var {data, dataIDs} = readRelayQueryData(this._storeData, fragment, dataID);
+    const {data, dataIDs} = readRelayQueryData(this._storeData, fragment, dataID);
     return [data, dataIDs];
   }
 

@@ -25,36 +25,36 @@ type NetworkLayer = {
   supports: (...options: Array<string>) => boolean;
 };
 
-var injectedNetworkLayer;
+let injectedNetworkLayer;
 
 /**
  * @internal
  *
  * `RelayNetworkLayer` provides a method to inject custom network behavior.
  */
-var RelayNetworkLayer = {
+const RelayNetworkLayer = {
   injectNetworkLayer(networkLayer: ?NetworkLayer): void {
     injectedNetworkLayer = networkLayer;
   },
 
   sendMutation(mutationRequest: RelayMutationRequest): void {
-    var networkLayer = getCurrentNetworkLayer();
-    var promise = networkLayer.sendMutation(mutationRequest);
+    const networkLayer = getCurrentNetworkLayer();
+    const promise = networkLayer.sendMutation(mutationRequest);
     if (promise) {
       Promise.resolve(promise).done();
     }
   },
 
   sendQueries(queryRequests: Array<RelayQueryRequest>): void {
-    var networkLayer = getCurrentNetworkLayer();
-    var promise = networkLayer.sendQueries(queryRequests);
+    const networkLayer = getCurrentNetworkLayer();
+    const promise = networkLayer.sendQueries(queryRequests);
     if (promise) {
       Promise.resolve(promise).done();
     }
   },
 
   supports(...options: Array<string>): boolean {
-    var networkLayer = getCurrentNetworkLayer();
+    const networkLayer = getCurrentNetworkLayer();
     return networkLayer.supports(...options);
   },
 };

@@ -18,9 +18,9 @@ const RelayNetworkLayer = require('RelayNetworkLayer');
 const RelayTestUtils = require('RelayTestUtils');
 
 describe('RelayNetworkLayer', () => {
-  var RelayQuery;
+  let RelayQuery;
 
-  var injectedNetworkLayer;
+  let injectedNetworkLayer;
 
   beforeEach(() => {
     jest.resetModuleRegistry();
@@ -68,7 +68,7 @@ describe('RelayNetworkLayer', () => {
     });
 
     it('delegates queries to the injected network layer', () => {
-      var queries = [];
+      const queries = [];
       expect(injectedNetworkLayer.sendQueries).not.toBeCalled();
       RelayNetworkLayer.sendQueries(queries);
       expect(injectedNetworkLayer.sendQueries).toBeCalledWith(queries);
@@ -76,11 +76,11 @@ describe('RelayNetworkLayer', () => {
   });
 
   describe('sendMutation', () => {
-    var mutation;
-    var variables;
-    var deferred;
-    var resolvedCallback;
-    var rejectedCallback;
+    let mutation;
+    let variables;
+    let deferred;
+    let resolvedCallback;
+    let rejectedCallback;
 
     beforeEach(() => {
       mutation = {};
@@ -106,7 +106,7 @@ describe('RelayNetworkLayer', () => {
       RelayNetworkLayer.sendMutation({mutation, variables, deferred});
       expect(injectedNetworkLayer.sendMutation).toBeCalled();
 
-      var pendingMutation = injectedNetworkLayer.sendMutation.mock.calls[0][0];
+      const pendingMutation = injectedNetworkLayer.sendMutation.mock.calls[0][0];
       expect(pendingMutation.mutation).toBe(mutation);
       expect(pendingMutation.variables).toBe(variables);
     });
@@ -116,8 +116,8 @@ describe('RelayNetworkLayer', () => {
       expect(resolvedCallback).not.toBeCalled();
       expect(rejectedCallback).not.toBeCalled();
 
-      var pendingMutation = injectedNetworkLayer.sendMutation.mock.calls[0][0];
-      var response = {};
+      const pendingMutation = injectedNetworkLayer.sendMutation.mock.calls[0][0];
+      const response = {};
       pendingMutation.deferred.resolve(response);
       jest.runAllTimers();
 
@@ -130,8 +130,8 @@ describe('RelayNetworkLayer', () => {
       expect(resolvedCallback).not.toBeCalled();
       expect(rejectedCallback).not.toBeCalled();
 
-      var pendingMutation = injectedNetworkLayer.sendMutation.mock.calls[0][0];
-      var error = new Error('Mutation Error');
+      const pendingMutation = injectedNetworkLayer.sendMutation.mock.calls[0][0];
+      const error = new Error('Mutation Error');
       pendingMutation.deferred.reject(error);
       jest.runAllTimers();
 

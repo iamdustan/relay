@@ -62,7 +62,7 @@ const RelayDiskCacheReader = {
     changeTracker: RelayChangeTracker,
     callbacks: CacheReadCallbacks,
   ): Abortable {
-    var reader = new RelayCacheReader(
+    const reader = new RelayCacheReader(
       store,
       cachedRecords,
       cachedRootCallMap,
@@ -90,7 +90,7 @@ const RelayDiskCacheReader = {
     changeTracker: RelayChangeTracker,
     callbacks: CacheReadCallbacks,
   ): Abortable {
-    var reader = new RelayCacheReader(
+    const reader = new RelayCacheReader(
       store,
       cachedRecords,
       cachedRootCallMap,
@@ -207,7 +207,7 @@ class RelayCacheReader {
     identifyingArgValue: string,
     query: RelayQuery.Root
   ): void {
-    var dataID = this._store.getDataID(storageKey, identifyingArgValue);
+    const dataID = this._store.getDataID(storageKey, identifyingArgValue);
     if (dataID == null) {
       if (this._cachedRootCallMap.hasOwnProperty(storageKey) &&
           this._cachedRootCallMap[storageKey].hasOwnProperty(
@@ -236,7 +236,7 @@ class RelayCacheReader {
     identifyingArgValue: string,
     query: RelayQuery.Root
   ) {
-    var rootKey = storageKey + '*' + identifyingArgValue;
+    const rootKey = storageKey + '*' + identifyingArgValue;
     if (this._pendingRoots.hasOwnProperty(rootKey)) {
       this._pendingRoots[rootKey].push(query);
     } else {
@@ -252,7 +252,7 @@ class RelayCacheReader {
             this._handleFailed();
             return;
           }
-          var roots = this._pendingRoots[rootKey];
+          const roots = this._pendingRoots[rootKey];
           delete this._pendingRoots[rootKey];
 
           this._cachedRootCallMap[storageKey] =
@@ -287,7 +287,7 @@ class RelayCacheReader {
   }
 
   visitNode(dataID: DataID, pendingItem: PendingItem): void {
-    var {missingData, pendingNodes} = findRelayQueryLeaves(
+    const {missingData, pendingNodes} = findRelayQueryLeaves(
       this._store,
       this._cachedRecords,
       pendingItem.node,
@@ -343,7 +343,7 @@ class RelayCacheReader {
             this._changeTracker.updateID(dataID);
           }
           this._cachedRecords[dataID] = value;
-          var items = this._pendingNodes[dataID];
+          const items = this._pendingNodes[dataID];
           delete this._pendingNodes[dataID];
           if (this._cachedRecords[dataID] === undefined) {
             // We are out of luck if disk doesn't have the node either.

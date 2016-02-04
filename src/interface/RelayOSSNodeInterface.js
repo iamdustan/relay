@@ -37,7 +37,7 @@ type RootCallInfo = {
  *
  * Defines logic relevant to the informal "Node" GraphQL interface.
  */
-var RelayOSSNodeInterface = {
+const RelayOSSNodeInterface = {
   ANY_TYPE: '__any',
   ID: 'id',
   NODE: 'node',
@@ -57,15 +57,15 @@ var RelayOSSNodeInterface = {
     query: RelayQuery.Root,
     payload: {[key: string]: mixed}
   ): Array<PayloadResult> {
-    var results = [];
+    const results = [];
 
-    var rootBatchCall = query.getBatchCall();
+    const rootBatchCall = query.getBatchCall();
     if (rootBatchCall) {
       getPayloadRecords(query, payload).forEach(result => {
         if (typeof result !== 'object' || !result) {
           return;
         }
-        var dataID = result[RelayOSSNodeInterface.ID];
+        const dataID = result[RelayOSSNodeInterface.ID];
         invariant(
           dataID != null,
           'RelayOSSNodeInterface.getResultsFromPayload(): Unable to write ' +
@@ -76,14 +76,14 @@ var RelayOSSNodeInterface = {
         results.push({dataID, result});
       });
     } else {
-      var records = getPayloadRecords(query, payload);
-      var ii = 0;
+      const records = getPayloadRecords(query, payload);
+      let ii = 0;
       const storageKey = query.getStorageKey();
       forEachRootCallArg(query, identifyingArgValue => {
-        var result = records[ii++];
-        var dataID = store.getDataID(storageKey, identifyingArgValue);
+        const result = records[ii++];
+        let dataID = store.getDataID(storageKey, identifyingArgValue);
         if (dataID == null) {
-          var payloadID = typeof result === 'object' && result ?
+          const payloadID = typeof result === 'object' && result ?
             result[RelayOSSNodeInterface.ID] :
             null;
           if (payloadID != null) {
@@ -108,10 +108,10 @@ function getPayloadRecords(
   query: RelayQuery.Root,
   payload: {[key: string]: mixed}
 ): Array<mixed> {
-  var fieldName = query.getFieldName();
+  const fieldName = query.getFieldName();
   const identifyingArg = query.getIdentifyingArg();
   const identifyingArgValue = (identifyingArg && identifyingArg.value) || null;
-  var records = payload[fieldName];
+  const records = payload[fieldName];
   if (!query.getBatchCall()) {
     if (Array.isArray(identifyingArgValue)) {
       invariant(

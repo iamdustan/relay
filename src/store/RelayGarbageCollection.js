@@ -28,7 +28,7 @@ let _stepLength = -1; // collect in a single pass by default
  * Provides methods to control the garbage collection of records in
  * `RelayStoreData`.
  */
-var RelayGarbageCollection = {
+const RelayGarbageCollection = {
   /**
    * Initializes garbage collection: must be called before any records are
    * fetched. When records are collected after calls to `scheduleCollection` or
@@ -53,7 +53,7 @@ var RelayGarbageCollection = {
    * Collects any un-referenced records in the store.
    */
   scheduleCollection(): void {
-    var garbageCollector =
+    const garbageCollector =
       RelayStoreData.getDefaultInstance().getGarbageCollector();
 
     if (garbageCollector) {
@@ -68,7 +68,7 @@ var RelayGarbageCollection = {
    * NOTE: If the given record is still referenced, no records are collected.
    */
   scheduleCollectionFromNode(dataID: DataID): void {
-    var garbageCollector =
+    const garbageCollector =
       RelayStoreData.getDefaultInstance().getGarbageCollector();
 
     if (garbageCollector) {

@@ -27,7 +27,7 @@ const invariant = require('invariant');
 const stableStringify = require('stableStringify');
 const warning = require('warning');
 
-var queryCache = new Map();
+const queryCache = new Map();
 
 /**
  * @internal
@@ -41,12 +41,12 @@ function getRelayQueries(
   if (!queryCache.has(Component)) {
     queryCache.set(Component, {});
   }
-  var cacheKey = route.name + ':' + stableStringify(route.params);
-  var cache = queryCache.get(Component);
+  const cacheKey = route.name + ':' + stableStringify(route.params);
+  const cache = queryCache.get(Component);
   if (cache.hasOwnProperty(cacheKey)) {
     return cache[cacheKey];
   }
-  var querySet = {};
+  const querySet = {};
   Component.getFragmentNames().forEach(fragmentName => {
     querySet[fragmentName] = null;
   });
@@ -63,9 +63,9 @@ function getRelayQueries(
       );
       return;
     }
-    var queryBuilder = route.queries[queryName];
+    const queryBuilder = route.queries[queryName];
     if (queryBuilder) {
-      var concreteQuery = buildRQL.Query(
+      const concreteQuery = buildRQL.Query(
         queryBuilder,
         Component,
         queryName,
@@ -79,7 +79,7 @@ function getRelayQueries(
         queryName
       );
       if (concreteQuery) {
-        var rootQuery = RelayQuery.Root.create(
+        const rootQuery = RelayQuery.Root.create(
           concreteQuery,
           RelayMetaRoute.get(route.name),
           route.params

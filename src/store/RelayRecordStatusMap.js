@@ -15,11 +15,11 @@
 /**
  * Record might contain data from optimistic update.
  */
-var OPTIMISTIC_MASK = 0x01;
+const OPTIMISTIC_MASK = 0x01;
 /**
  * Record was part of a mutation that resulted in an error.
  */
-var ERROR_MASK = 0x02;
+const ERROR_MASK = 0x02;
 
 function set(status: ?number, value: boolean, mask: number): number {
   status = status || 0;
@@ -37,7 +37,7 @@ function check(status: ?number, mask: number): boolean {
  * A set of functions for modifying `__status__` on records inside of
  * RelayStore.
  */
-var RelayRecordStatusMap = {
+const RelayRecordStatusMap = {
   setOptimisticStatus: function(status: ?number, value: boolean): number {
     return set(status, value, OPTIMISTIC_MASK);
   },

@@ -29,23 +29,23 @@ const RelayTestUtils = require('RelayTestUtils');
 const readRelayQueryData = require('readRelayQueryData');
 
 describe('RelayQueryResultObservable', () => {
-  var storeData;
-  var changeEmitter;
+  let storeData;
+  let changeEmitter;
 
-  var query;
-  var records;
-  var results;
-  var store;
-  var writer;
+  let query;
+  let records;
+  let results;
+  let store;
+  let writer;
 
   // helper functions
-  var {getNode} = RelayTestUtils;
+  const {getNode} = RelayTestUtils;
 
   function genMockSubscriber() {
-    var onCompleted = jest.genMockFunction();
-    var onError = jest.genMockFunction();
-    var onNext = jest.genMockFunction();
-    var mockClear = () => {
+    const onCompleted = jest.genMockFunction();
+    const onError = jest.genMockFunction();
+    const onNext = jest.genMockFunction();
+    const mockClear = () => {
       [onCompleted, onError, onNext].forEach(fn => fn.mockClear());
     };
     return {
@@ -57,7 +57,7 @@ describe('RelayQueryResultObservable', () => {
   }
 
   function observeRelayQueryData(dataID) {
-    var fragmentPointer = new GraphQLFragmentPointer(
+    const fragmentPointer = new GraphQLFragmentPointer(
       dataID,
       query
     );
@@ -99,9 +99,9 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('cannot double-unsubscribe a subscription', () => {
-    var observer = observeRelayQueryData('123');
-    var subscriber = genMockSubscriber();
-    var subscription = observer.subscribe(subscriber);
+    const observer = observeRelayQueryData('123');
+    const subscriber = genMockSubscriber();
+    const subscription = observer.subscribe(subscriber);
     subscription.dispose();
     expect(() => subscription.dispose()).toFailInvariant(
       'RelayQueryResultObservable: Subscriptions may only be disposed once.'
@@ -109,8 +109,8 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('immediately calls onNext of the first subscriber', () => {
-    var observer = observeRelayQueryData('123');
-    var subscriber = genMockSubscriber();
+    const observer = observeRelayQueryData('123');
+    const subscriber = genMockSubscriber();
     observer.subscribe(subscriber);
 
     expect(readRelayQueryData).toBeCalledWith(
@@ -123,13 +123,13 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('immediately calls onNext of subsequent subscribers', () => {
-    var observer = observeRelayQueryData('123');
-    var firstSubscriber = genMockSubscriber();
+    const observer = observeRelayQueryData('123');
+    const firstSubscriber = genMockSubscriber();
     observer.subscribe(firstSubscriber);
     readRelayQueryData.mockClear();
     firstSubscriber.mockClear();
 
-    var secondSubscriber = genMockSubscriber();
+    const secondSubscriber = genMockSubscriber();
     observer.subscribe(secondSubscriber);
     expect(readRelayQueryData).not.toBeCalled();
     expect(firstSubscriber.onNext).not.toBeCalled();
@@ -138,8 +138,8 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('updates all subscribers when data changes', () => {
-    var observer = observeRelayQueryData('123');
-    var subscribers = [
+    const observer = observeRelayQueryData('123');
+    const subscribers = [
       genMockSubscriber(),
       genMockSubscriber(),
     ];
@@ -161,9 +161,9 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('does not call callbacks after a subscription is disposed', () => {
-    var observer = observeRelayQueryData('123');
-    var subscriber = genMockSubscriber();
-    var subscription = observer.subscribe(subscriber);
+    const observer = observeRelayQueryData('123');
+    const subscriber = genMockSubscriber();
+    const subscription = observer.subscribe(subscriber);
     subscriber.mockClear();
     subscription.dispose();
 
@@ -178,8 +178,8 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('calls onNext if the record is initially unfetched', () => {
-    var observer = observeRelayQueryData('oops');
-    var subscriber = genMockSubscriber();
+    const observer = observeRelayQueryData('oops');
+    const subscriber = genMockSubscriber();
     observer.subscribe(subscriber);
 
     expect(subscriber.onCompleted).not.toBeCalled();
@@ -199,8 +199,8 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('calls onNext if the record is deleted', () => {
-    var observer = observeRelayQueryData('123');
-    var subscriber = genMockSubscriber();
+    const observer = observeRelayQueryData('123');
+    const subscriber = genMockSubscriber();
     observer.subscribe(subscriber);
     subscriber.mockClear();
 
@@ -225,8 +225,8 @@ describe('RelayQueryResultObservable', () => {
   });
 
   it('calls onNext if the record is evicted from the store', () => {
-    var observer = observeRelayQueryData('123');
-    var subscriber = genMockSubscriber();
+    const observer = observeRelayQueryData('123');
+    const subscriber = genMockSubscriber();
     observer.subscribe(subscriber);
     subscriber.mockClear();
 

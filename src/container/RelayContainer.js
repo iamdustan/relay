@@ -73,11 +73,11 @@ export type RootQueries = {
   [queryName: string]: RelayQLQueryBuilder;
 };
 
-var containerContextTypes = {
+const containerContextTypes = {
   route: RelayPropTypes.QueryConfig.isRequired,
 };
 
-var storeData = RelayStoreData.getDefaultInstance();
+const storeData = RelayStoreData.getDefaultInstance();
 
 storeData.getChangeEmitter().injectBatchingStrategy(
   relayUnstableBatchedUpdates
@@ -100,13 +100,13 @@ function createContainerComponent(
   Component: ReactClass,
   spec: RelayContainerSpec
 ): RelayContainer {
-  var componentName = Component.displayName || Component.name;
-  var containerName = 'Relay(' + componentName + ')';
+  const componentName = Component.displayName || Component.name;
+  const containerName = 'Relay(' + componentName + ')';
 
-  var fragments = spec.fragments;
-  var fragmentNames = Object.keys(fragments);
-  var initialVariables = spec.initialVariables || {};
-  var prepareVariables = spec.prepareVariables;
+  const fragments = spec.fragments;
+  const fragmentNames = Object.keys(fragments);
+  const initialVariables = spec.initialVariables || {};
+  const prepareVariables = spec.prepareVariables;
 
   class RelayContainer extends React.Component {
     mounted: boolean;
@@ -128,7 +128,7 @@ function createContainerComponent(
     constructor(props, context) {
       super(props, context);
 
-      var {route} = context;
+      const {route} = context;
       invariant(
         route && typeof route.name === 'string',
         'RelayContainer: `%s` was rendered without a valid route. Make sure ' +
@@ -137,7 +137,7 @@ function createContainerComponent(
         containerName
       );
 
-      var self: any = this;
+      const self: any = this;
       self.forceFetch = this.forceFetch.bind(this);
       self.getPendingTransactions = this.getPendingTransactions.bind(this);
       self.hasFragmentData = this.hasFragmentData.bind(this);
@@ -195,13 +195,13 @@ function createContainerComponent(
       var fragmentPointers = {};
       var querySet = {};
       fragmentNames.forEach(fragmentName => {
-        var fragment = getFragment(fragmentName, this.context.route, variables);
-        var queryData = this.state.queryData[fragmentName];
+        const fragment = getFragment(fragmentName, this.context.route, variables);
+        const queryData = this.state.queryData[fragmentName];
         if (!fragment || queryData == null) {
           return;
         }
 
-        var fragmentPointer;
+        let fragmentPointer;
         if (fragment.isPlural()) {
           invariant(
             Array.isArray(queryData),
@@ -209,9 +209,9 @@ function createContainerComponent(
             'of records because the corresponding fragment is plural.',
             fragmentName
           );
-          var dataIDs = [];
+          const dataIDs = [];
           queryData.forEach((data, ii) => {
-            var dataID = RelayRecord.getDataID(data);
+            const dataID = RelayRecord.getDataID(data);
             if (dataID) {
               querySet[fragmentName + ii] =
                 storeData.buildFragmentQueryForDataID(fragment, dataID);
@@ -224,7 +224,7 @@ function createContainerComponent(
         } else {
           /* $FlowFixMe(>=0.19.0) - queryData is mixed but getID expects Object
            */
-          var dataID = RelayRecord.getDataID(queryData);
+          const dataID = RelayRecord.getDataID(queryData);
           if (dataID) {
             fragmentPointer = new GraphQLFragmentPointer(dataID, fragment);
             querySet[fragmentName] =
@@ -242,13 +242,13 @@ function createContainerComponent(
       callback: ?ComponentReadyStateChangeCallback,
       forceFetch: boolean
     ): void {
-      var lastVariables = this.state.variables;
-      var prevVariables = this.pending ? this.pending.variables : lastVariables;
-      var nextVariables = mergeVariables(prevVariables, partialVariables);
+      const lastVariables = this.state.variables;
+      const prevVariables = this.pending ? this.pending.variables : lastVariables;
+      const nextVariables = mergeVariables(prevVariables, partialVariables);
 
       this.pending && this.pending.request.abort();
 
-      var completeProfiler = RelayProfiler.profile(
+      const completeProfiler = RelayProfiler.profile(
         'RelayContainer.setVariables', {
           containerName,
           nextVariables,
@@ -258,34 +258,34 @@ function createContainerComponent(
       // If variables changed or we are force-fetching, we need to build a new
       // set of queries that includes the updated variables. Because the pending
       // fetch is always canceled, always initiate a new fetch.
-      var querySet = {};
-      var fragmentPointers = null;
+      let querySet = {};
+      let fragmentPointers = null;
       if (forceFetch || !shallowEqual(nextVariables, lastVariables)) {
         ({querySet, fragmentPointers} =
           this._createQuerySetAndFragmentPointers(nextVariables));
       }
 
-      var onReadyStateChange = ErrorUtils.guard(readyState => {
-        var {aborted, done, error, ready} = readyState;
-        var isComplete = aborted || done || error;
+      const onReadyStateChange = ErrorUtils.guard(readyState => {
+        const {aborted, done, error, ready} = readyState;
+        const isComplete = aborted || done || error;
         if (isComplete && this.pending === current) {
           this.pending = null;
         }
-        var partialState;
+        let partialState;
         if (ready && fragmentPointers) {
           // Only update query data if variables changed. Otherwise, `querySet`
           // and `fragmentPointers` will be empty, and `nextVariables` will be
           // equal to `lastVariables`.
           this._fragmentPointers = fragmentPointers;
           this._updateQueryResolvers();
-          var queryData = this._getQueryData(this.props);
+          const queryData = this._getQueryData(this.props);
           partialState = {variables: nextVariables, queryData};
         } else {
           partialState = {};
         }
-        var mounted = this.mounted;
+        const mounted = this.mounted;
         if (mounted) {
-          var updateProfiler = RelayProfiler.profile('RelayContainer.update');
+          const updateProfiler = RelayProfiler.profile('RelayContainer.update');
           relayUnstableBatchedUpdates(() => {
             this.setState(partialState, () => {
               updateProfiler.stop();
@@ -310,7 +310,7 @@ function createContainerComponent(
         }
       }, 'RelayContainer.onReadyStateChange');
 
-      var current = {
+      const current = {
         variables: nextVariables,
         request: forceFetch ?
           RelayStore.forceFetch(querySet, onReadyStateChange) :
@@ -325,7 +325,7 @@ function createContainerComponent(
     hasOptimisticUpdate(
       record: Object
     ): boolean {
-      var dataID = RelayRecord.getDataID(record);
+      const dataID = RelayRecord.getDataID(record);
       invariant(
         dataID != null,
         'RelayContainer.hasOptimisticUpdate(): Expected a record in `%s`.',
@@ -396,11 +396,11 @@ function createContainerComponent(
       if (this.context.route.useMockData) {
         return;
       }
-      var variables =
+      const variables =
         getVariablesWithPropOverrides(spec, this.props, initialVariables);
       this._updateFragmentPointers(this.props, this.context.route, variables);
       this._updateQueryResolvers();
-      var queryData = this._getQueryData(this.props);
+      const queryData = this._getQueryData(this.props);
 
       this.setState({
         variables,
@@ -412,12 +412,12 @@ function createContainerComponent(
       nextProps: Object,
       nextContext?: Object
     ): void {
-      var {route} = nullthrows(nextContext);
+      const {route} = nullthrows(nextContext);
       if (route.useMockData) {
         return;
       }
       this.setState(state => {
-        var variables = getVariablesWithPropOverrides(
+        const variables = getVariablesWithPropOverrides(
           spec,
           nextProps,
           resetPropOverridesForVariables(spec, nextProps, state.variables)
@@ -449,7 +449,7 @@ function createContainerComponent(
       this._fragmentPointers = {};
       this._queryResolvers = {};
 
-      var pending = this.pending;
+      const pending = this.pending;
       if (pending) {
         pending.request.abort();
         this.pending = null;
@@ -458,11 +458,11 @@ function createContainerComponent(
     }
 
     _updateQueryResolvers(): void {
-      var fragmentPointers = this._fragmentPointers;
-      var queryResolvers = this._queryResolvers;
+      const fragmentPointers = this._fragmentPointers;
+      const queryResolvers = this._queryResolvers;
       fragmentNames.forEach(fragmentName => {
-        var fragmentPointer = fragmentPointers[fragmentName];
-        var queryResolver = queryResolvers[fragmentName];
+        const fragmentPointer = fragmentPointers[fragmentName];
+        let queryResolver = queryResolvers[fragmentName];
         if (!fragmentPointer) {
           if (queryResolver) {
             queryResolver.reset();
@@ -483,8 +483,8 @@ function createContainerComponent(
       if (!this.mounted) {
         return;
       }
-      var queryData = this._getQueryData(this.props);
-      var updateProfiler = RelayProfiler.profile(
+      const queryData = this._getQueryData(this.props);
+      const updateProfiler = RelayProfiler.profile(
         'RelayContainer.handleFragmentDataUpdate'
       );
       this.setState({queryData}, updateProfiler.stop);
@@ -605,11 +605,11 @@ function createContainerComponent(
     _getQueryData(
       props: Object
     ): Object {
-      var queryData = {};
-      var fragmentPointers = this._fragmentPointers;
+      const queryData = {};
+      const fragmentPointers = this._fragmentPointers;
       forEachObject(this._queryResolvers, (queryResolver, propName) => {
-        var propValue = props[propName];
-        var fragmentPointer = fragmentPointers[propName];
+        const propValue = props[propName];
+        const fragmentPointer = fragmentPointers[propName];
 
         if (!propValue || !fragmentPointer) {
           // Clear any subscriptions since there is no data.
@@ -642,7 +642,7 @@ function createContainerComponent(
         return true;
       }
 
-      var fragmentPointers = this._fragmentPointers;
+      const fragmentPointers = this._fragmentPointers;
       return (
         !RelayContainerComparators.areNonQueryPropsEqual(
           fragments,
@@ -665,7 +665,7 @@ function createContainerComponent(
     }
 
     render(): ReactElement {
-      var relayProps: RelayProp = {
+      const relayProps: RelayProp = {
         forceFetch: this.forceFetch,
         getPendingTransactions: this.getPendingTransactions,
         hasFragmentData: this.hasFragmentData,
@@ -690,21 +690,21 @@ function createContainerComponent(
     route: RelayQueryConfigSpec,
     variables: Variables
   ): RelayQuery.Fragment {
-    var fragmentBuilder = fragments[fragmentName];
+    const fragmentBuilder = fragments[fragmentName];
     invariant(
       fragmentBuilder,
       'RelayContainer: Expected `%s` to have a query fragment named `%s`.',
       containerName,
       fragmentName
     );
-    var fragment = buildContainerFragment(
+    const fragment = buildContainerFragment(
       containerName,
       fragmentName,
       fragmentBuilder,
       initialVariables
     );
     // TODO: Allow routes without names, #7856965.
-    var metaRoute = RelayMetaRoute.get(route.name);
+    const metaRoute = RelayMetaRoute.get(route.name);
     if (prepareVariables) {
       variables = prepareVariables(variables, metaRoute);
     }
@@ -731,10 +731,10 @@ function getVariablesWithPropOverrides(
   props: Object,
   variables: Variables
 ): Variables {
-  var initialVariables = spec.initialVariables;
+  const initialVariables = spec.initialVariables;
   if (initialVariables) {
-    var mergedVariables;
-    for (var key in initialVariables) {
+    let mergedVariables;
+    for (let key in initialVariables) {
       if (key in props) {
         mergedVariables = mergedVariables || {...variables};
         mergedVariables[key] = props[key];
@@ -756,8 +756,8 @@ function resetPropOverridesForVariables(
   props: Object,
   variables: Variables
 ): Variables {
-  var initialVariables = spec.initialVariables;
-  for (var key in initialVariables) {
+  const initialVariables = spec.initialVariables;
+  for (let key in initialVariables) {
     if (key in props && props[key] != variables[key]) {
       return initialVariables;
     }
@@ -785,7 +785,7 @@ function mergeVariables(
   partialVariables: ?Variables
 ): Variables {
   if (partialVariables) {
-    for (var key in partialVariables) {
+    for (let key in partialVariables) {
       if (currentVariables[key] !== partialVariables[key]) {
         return {...currentVariables, ...partialVariables};
       }
@@ -803,7 +803,7 @@ function buildContainerFragment(
   fragmentBuilder: RelayQLFragmentBuilder,
   variables: Variables
 ): ConcreteFragment {
-  var fragment = buildRQL.Fragment(
+  const fragment = buildRQL.Fragment(
     fragmentBuilder,
     variables
   );
@@ -822,9 +822,9 @@ function getDeferredFragment(
   context: Object,
   variables: Variables
 ): RelayQuery.Fragment {
-  var route = RelayMetaRoute.get(context.route.name);
-  var concreteFragment = fragmentReference.getFragment(variables);
-  var concreteVariables = fragmentReference.getVariables(route, variables);
+  const route = RelayMetaRoute.get(context.route.name);
+  const concreteFragment = fragmentReference.getFragment(variables);
+  const concreteVariables = fragmentReference.getVariables(route, variables);
   return RelayQuery.Fragment.create(
     concreteFragment,
     route,
@@ -844,21 +844,21 @@ function create(
   Component: ReactClass<any, any, any>,
   spec: RelayContainerSpec,
 ): RelayLazyContainer {
-  var componentName = Component.displayName || Component.name;
-  var containerName = 'Relay(' + componentName + ')';
+  const componentName = Component.displayName || Component.name;
+  const containerName = 'Relay(' + componentName + ')';
 
-  var fragments = spec.fragments;
+  const fragments = spec.fragments;
   invariant(
     typeof fragments === 'object' && fragments,
     'Relay.createContainer(%s, ...): Missing `fragments`, which is expected ' +
     'to be an object mapping from `propName` to: () => Relay.QL`...`',
     componentName
   );
-  var fragmentNames = Object.keys(fragments);
-  var initialVariables = spec.initialVariables || {};
-  var prepareVariables = spec.prepareVariables;
+  const fragmentNames = Object.keys(fragments);
+  const initialVariables = spec.initialVariables || {};
+  const prepareVariables = spec.prepareVariables;
 
-  var Container;
+  let Container;
   function ContainerConstructor(props, context) {
     if (!Container) {
       Container = createContainerComponent(Component, spec);
@@ -879,7 +879,7 @@ function create(
     fragmentName: string,
     variableMapping?: Variables
   ): RelayFragmentReference {
-    var fragmentBuilder = fragments[fragmentName];
+    const fragmentBuilder = fragments[fragmentName];
     if (!fragmentBuilder) {
       invariant(
         false,

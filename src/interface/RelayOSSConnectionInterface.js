@@ -15,7 +15,7 @@
 
 import type {Call} from 'RelayInternalTypes';
 
-var CONNECTION_CALLS = {
+const CONNECTION_CALLS = {
   'after': true,
   'before': true,
   'find': true,
@@ -23,7 +23,7 @@ var CONNECTION_CALLS = {
   'last': true,
   'surrounds': true,
 };
-var REQUIRED_RANGE_CALLS = {
+const REQUIRED_RANGE_CALLS = {
   'find': true,
   'first': true,
   'last': true,
@@ -34,7 +34,7 @@ var REQUIRED_RANGE_CALLS = {
  *
  * Defines logic relevant to the informal "Connection" GraphQL interface.
  */
-var RelayOSSConnectionInterface = {
+const RelayOSSConnectionInterface = {
   CLIENT_MUTATION_ID: 'clientMutationId',
   CURSOR: 'cursor',
   EDGES: 'edges',
@@ -71,7 +71,7 @@ var RelayOSSConnectionInterface = {
    * Gets a default record representing a connection's `PAGE_INFO`.
    */
   getDefaultPageInfo(): {[key: string]: mixed} {
-    var pageInfo = {};
+    const pageInfo = {};
     pageInfo[RelayOSSConnectionInterface.START_CURSOR] = undefined;
     pageInfo[RelayOSSConnectionInterface.END_CURSOR] = undefined;
     pageInfo[RelayOSSConnectionInterface.HAS_NEXT_PAGE] = false;

@@ -88,7 +88,7 @@ describe('RelayRenderer', function() {
   });
 
   it('primes new queries when `queryConfig` changes', () => {
-    var anotherRoute = RelayQueryConfig.genMockInstance();
+    const anotherRoute = RelayQueryConfig.genMockInstance();
     ShallowRenderer.render(
       <RelayRenderer Component={MockContainer} queryConfig={anotherRoute} />
     );

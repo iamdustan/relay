@@ -43,7 +43,7 @@ class GraphQLFragmentPointer {
     store: RelayRecordStore,
     query: RelayQuery.Root
   ): ?FragmentPointerObject | Array<?Record> {
-    var fragment = getRootFragment(query);
+    const fragment = getRootFragment(query);
     if (!fragment) {
       return null;
     }
@@ -53,9 +53,9 @@ class GraphQLFragmentPointer {
     const identifyingArgValue =
       (identifyingArg && identifyingArg.value) || null;
     if (Array.isArray(identifyingArgValue)) {
-      var rootFragment = fragment; // for Flow
+      const rootFragment = fragment; // for Flow
       return identifyingArgValue.map(singleIdentifyingArgValue => {
-        var dataID = store.getDataID(storageKey, singleIdentifyingArgValue);
+        const dataID = store.getDataID(storageKey, singleIdentifyingArgValue);
         if (!dataID) {
           return null;
         }
@@ -73,7 +73,7 @@ class GraphQLFragmentPointer {
       query.getName(),
       identifyingArgValue
     );
-    var dataIDOrIDs = store.getDataID(storageKey, identifyingArgValue);
+    const dataIDOrIDs = store.getDataID(storageKey, identifyingArgValue);
     if (!dataIDOrIDs) {
       return null;
     }
@@ -87,8 +87,8 @@ class GraphQLFragmentPointer {
     dataIDOrIDs: DataID | Array<DataID>,
     fragment: RelayQuery.Fragment
   ) {
-    var isArray = Array.isArray(dataIDOrIDs);
-    var isPlural = fragment.isPlural();
+    const isArray = Array.isArray(dataIDOrIDs);
+    const isPlural = fragment.isPlural();
     invariant(
       isArray === isPlural,
       'GraphQLFragmentPointer: Wrong plurality, %s supplied with %s fragment.',
@@ -152,7 +152,7 @@ class GraphQLFragmentPointer {
 }
 
 function getRootFragment(query: RelayQuery.Root): ?RelayQuery.Fragment {
-  var batchCall = query.getBatchCall();
+  const batchCall = query.getBatchCall();
   if (batchCall) {
     invariant(
       false,
@@ -162,7 +162,7 @@ function getRootFragment(query: RelayQuery.Root): ?RelayQuery.Fragment {
       batchCall.refParamName
     );
   }
-  var fragment;
+  let fragment;
   query.getChildren().forEach(child => {
     if (child instanceof RelayQuery.Fragment) {
       invariant(
